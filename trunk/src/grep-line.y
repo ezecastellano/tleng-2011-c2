@@ -1,63 +1,51 @@
-/* Reverse polish notation calculator.  */
+/* Grep line.  */
+
 
 %{
-#include "define.h"
 #include "automata.h"
-/*Librerias que voy a usar. */
-#include <ctype.h>
+#include "define.h"
 #include <stdio.h>
 %}
 
-%token NUM
+%token ALFANUM
+
 
 %% /* Grammar rules and actions follow.  */
 
-input:    /* empty */
-     | input line
+input: expression { automata = $1; };
+
+expression:  data operators rest {$$ = automata_handle_expression($1, $2, $3); }
 ;
 
-line:     '\n'
-     | exp '\n'      { printf ("Res:\t%.10g\n", $1); }
+data: parenthesis  {}
+    | final {printf("data-final\n");}
 ;
 
-exp:      NUM           { $$ = $1;           }
-     | exp exp '+'   { $$ = $1 + $2;      }
-     | exp exp '-'   { $$ = $1 - $2;      }
-     | exp exp '*'   { $$ = $1 * $2;      }
-     | exp exp '/'   { $$ = $1 / $2;      }
-      /* Exponentiation */
-      /* Unary minus, lo declararon como un n de negativo para evitar aambiguedad con el - */
-     | exp 'n'       { $$ = -$1;          }
+rest: {$$ = build_empty_automata();}
+    | binary expression {$$ = concat_automatas($1, $2);}
 ;
+
+operators: {$$ = build_empty_automata();}
+    | unary operators {$$ = automata_apply_operator($2 , $1);}
+;
+
+parenthesis: '('expression')' {$$ = sinthesize_automata($1);}
+;
+
+final: '.' {$$ = build_any_alfanum_automata()}
+    | ALFANUM {$$ = $1;}
+;
+
+unary: '?' {$$ = build_onezero_automata();}
+    | '+' {$$ = build_oneplus_automata();}
+    | '*' {$$ = build_zeroplus_automata();}
+;
+
+binary: {$$ build_empty_automata();}
+    | '|' {$$ = build_or_automata();}
+;
+
+
 %%
-
-
-int yylex (void) {
-    int c;
-
-    /* Skip white space.  */
-    while ((c = getchar ()) == ' ' || c == '\t')
-     ;
-    /* Process numbers.  */
-    if (c == '.' || isdigit (c)) {
-       ungetc(c, stdin);
-       scanf("%lf", &yylval);
-       return NUM;
-    }
-    /* Return end-of-input.  */
-    if (c == EOF)
-     return 0;
-    /* Return a single char.  */
-    return c;
-}
      
-     
-int main (void) {
-        build_automata();
-        return yyparse();
-}
 
- /* Called by yyparse on error.  */
-void yyerror (char const *s) {
-   fprintf (stderr, "%s\n", s);
-}
