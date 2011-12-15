@@ -6,9 +6,12 @@
 /*Librerias que voy a usar. */
 #include <ctype.h>
 #include <stdio.h>
+#include <iostream>
 /* esto está por que se necesitan declaradas antes de usarlas. */
-int yylex (void);
-void yyerror (char const *);
+using namespace std;
+int yylex(void);
+void yyerror(char const *);
+
 %}
 
 /** Por cada terminal que sea más largo que un caracter lo declaramos como un 
@@ -36,11 +39,11 @@ token, aca son todos simbolos de una letra (+-*...) excepto por los numeros **/
 */
 
 input:    /* empty */
-     | input line {printf("%s", $2);}
+     | input line {cout <<  $2 << endl;}
 ;
 
 line:     '\n'
-     | exp '\n'      { printf ("Res:\t%.10g\n", $1); }
+     | exp '\n'      { cout << "Res:\t" << $1 << endl; }
 ;
 
 exp:      NUM           { $$ = $1;           }
