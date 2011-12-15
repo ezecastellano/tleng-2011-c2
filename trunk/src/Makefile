@@ -1,18 +1,18 @@
-GCCFLAGS=-g 
+CXXFLAGS = -g 
 #-Wall -Wextra
-GCC=gcc
-SOURCES = automata.c grep-line.tab.c main.c
+SOURCES = automata.cpp grep-line.tab.cpp main.cpp
+BISON = grep-line.ypp
 
 all: grep-line
 
-grep-line.tab.c: grep-line.y
-	bison -d grep-line.y
+grep-line.tab.cpp: $(BISON)
+	bison -d $(BISON)
 
 grep-line: $(SOURCES)
-	$(GCC) $(GCCFLAGS) $(SOURCES) -o grep-line
+	$(CXX) $(CXXFLAGS) $(SOURCES) -o grep-line
 
 test: grep-line
 	cat lineas | ./grep-line
 
 clean:
-	rm -f grep-line.tab.c grep-line
+	rm -f grep-line.tab.cpp grep-line.tab.hpp grep-line
