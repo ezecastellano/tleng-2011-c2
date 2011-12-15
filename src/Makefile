@@ -1,14 +1,15 @@
-GCCFLAGS=-g -Wall -Wextra
+GCCFLAGS=-g 
+#-Wall -Wextra
 GCC=gcc
+SOURCES = automata.c grep-line.tab.c main.c
 
 all: grep-line
 
 grep-line.tab.c: grep-line.y
-	bison grep-line.y
+	bison -d grep-line.y
 
-grep-line: grep-line.tab.c
-	$(GCC) $(GCCFLAGS) automata.c grep-line.tab.c -o grep-line
-	rm grep-line.tab.c
+grep-line: $(SOURCES)
+	$(GCC) $(GCCFLAGS) $(SOURCES) -o grep-line
 
 test: grep-line
 	cat lineas | ./grep-line
