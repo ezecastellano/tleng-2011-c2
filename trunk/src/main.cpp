@@ -1,11 +1,13 @@
-#include "define.h"
-#include "automata.h"
-#include "grep-line.tab.h"
+#include "define.hpp"
+#include "automata.hpp"
+#include "grep-line.tab.hpp"
 #include <stdio.h>
 #include <ctype.h>
 #include <error.h>
 #include <string.h>
+#include <iostream>
 
+using namespace std;
 
 char* regexp;
 int regexp_index = 0;
@@ -23,14 +25,14 @@ void yyerror (char const *s) {
 
 int yylex (void) {
     char c = get_next();
-    printf("lex = %c·%d\n", c, (int)c);
+    cout << "lex = " << c << endl;
     /* END */
     if (c == EOF)
         return 0;
         
     /* Process ALFANUM.  */
     if (isalpha(c) || isdigit (c) || c == ' ' ) {
-        yylval = build_alfanum_automata(c);
+        yylval = Automata(c);
         return ALFANUM;
     }
     /* Return a single char.  */
@@ -47,8 +49,9 @@ int main (int argc, char * argv[]) {
             printf("Should parse this file %s\n", argv[3]);
         }
         //~ build_automata();
-        yyparse();
-        Automata d_automata = determinize_automata(automata);
+        if(yyparse()) {
+            cout << "Regexp no fue parseada correctamente." << endl;
+        }
         //Por cada linea de texto, imprimirla si matchea con el automata
         return 0;
 }
