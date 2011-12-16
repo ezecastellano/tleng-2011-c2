@@ -32,7 +32,7 @@ int yylex (void) {
         
     /* Process ALFANUM.  */
     if (isalpha(c) || isdigit (c) || c == ' ' ) {
-        yylval = Automata(c);
+        Automata yylval(c);
         return ALFANUM;
     }
     /* Return a single char.  */
