@@ -6,6 +6,7 @@
 #include <error.h>
 #include <string.h>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -32,7 +33,7 @@ int yylex (void) {
         
     /* Process ALFANUM.  */
     if (isalpha(c) || isdigit (c) || c == ' ' ) {
-        Automata yylval(c);
+        yylval = Automata(c);
         return ALFANUM;
     }
     /* Return a single char.  */
@@ -51,8 +52,8 @@ int main (int argc, char * argv[]) {
         if(yyparse()) {
             cout << "Regexp no fue parseada correctamente." << endl;
         }
+        
         automata.determinize();
         //Por cada linea de texto, imprimirla si matchea con el automata
-        
         return 0;
 }

@@ -27,7 +27,7 @@ operand: parenthesis    { $$ = $1; }
 ;
 
 character: ALFANUM      { $$ = $1; }
-    | '.'               { $$ = Automata::new_any(); }
+    | '.'               { $$ = Automata('.'); }
 ;
 
 parenthesis: '('expression')' { $$ = $1; }
