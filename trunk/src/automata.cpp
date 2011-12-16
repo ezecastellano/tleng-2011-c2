@@ -7,9 +7,7 @@ using namespace std;
 
 Automata::Automata() {
     init = NULL;
-    //~ init = new Transition(LAMBDA);
     tail = init;
-    //~ transitions.insert(init);
 }
 
 Automata::~Automata() {
@@ -18,13 +16,6 @@ Automata::~Automata() {
     delete_all();
 }
 
-//~ Automata::Automata(const Automata & other) {
-    //~ if(this == &other)
-        //~ return;
-    //~ init = other.init;
-    //~ tail = other.tail;
-    //~ synchronize(other);
-//~ }
 
 Automata & Automata::operator = (const Automata & other) {
     if(this == &other)
@@ -46,6 +37,7 @@ Automata::Automata(char c){
     tail = init;
     transitions.insert(init);
 }
+
 //determinize the automata
 void Automata::determinize(){
     cout << "Determinize" << endl;
@@ -54,15 +46,19 @@ void Automata::determinize(){
 // ---------------  operators ----------------------------------------
 
 Automata & Automata::operator|(Automata & other){
-    assert(other.tail != NULL);
     Transition* new_init = new Transition(LAMBDA);
     Transition* new_tail = new Transition(LAMBDA);
+    //Fork
     new_init->add_next(other.init);
     new_init->add_next(init);
+    //Join
     other.tail->add_next(new_tail);
     tail->add_next(new_tail);
+    //rename
     init = new_init;
     tail = new_tail;
+    
+    //memory managment
     transitions.insert(new_init);
     transitions.insert(new_tail);
     synchronize(other);
@@ -70,9 +66,11 @@ Automata & Automata::operator|(Automata & other){
 }
 //Concatenate two automata
 Automata & Automata::operator+(Automata & other){
-    assert(tail != NULL);
+    //Bind
     tail->add_next(other.init);
     tail = other.tail;
+    
+    //MM
     synchronize(other);
     return *this;
 }
@@ -82,7 +80,7 @@ Automata & Automata::apply_op(Automata & oper){
     Transition* new_init = new Transition(LAMBDA);
     Transition* new_tail = new Transition(LAMBDA);
     
-    // Idem potente
+    // Extend with lambda
     new_init->add_next(init);
     tail->add_next(new_tail);
     
@@ -112,6 +110,7 @@ Automata & Automata::apply_op(Automata & oper){
 
 void Automata::synchronize(const Automata & other) {
     set<Transition*>::const_iterator it;
+    //Saves a reference to each Transition
     for(it = other.transitions.begin();
         it != other.transitions.end();
         it++) {
