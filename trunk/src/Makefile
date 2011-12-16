@@ -5,14 +5,15 @@ BISON = grep-line.ypp
 
 all: grep-line
 
-grep-line.tab.cpp: $(BISON)
-	bison -d $(BISON)
+bison: $(BISON)
+	bison -d -ggraph.dot $(BISON)
+	dot graph.dot -Tpng -o graph.png
 
-grep-line: $(SOURCES)
+grep-line: bison $(SOURCES)
 	$(CXX) $(CXXFLAGS) $(SOURCES) -o grep-line
 
 test: grep-line
-	cat lineas | ./grep-line
+	./run-test-regexp
 
 clean:
-	rm -f grep-line.tab.cpp grep-line.tab.hpp grep-line
+	rm -f grep-line.tab.cpp grep-line.tab.hpp grep-line graph.dot graph.png

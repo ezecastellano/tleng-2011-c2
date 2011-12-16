@@ -11,34 +11,29 @@
 
 %% /* Grammar rules and actions follow.  */
 
-input: expression;
-
-expression: 
-    | term binary expression
+input: term             { $$ = $1;}
+    | input term        { $$ = $1 + $2; }
+    | input '|' term    { $$ = $1 | $2; }
+;
+    
+term: term unary        { $$ = $1.apply_op($2); }
+    | operand           { $$ = $1; }
 ;
 
-term: term unary
-    | operand
+operand: parenthesis    { $$ = $1; }
+    | character         { $$ = $1; }
 ;
 
-binary: 
-    | '|'
+character: ALFANUM      { $$ = $1; }
+    | '.'               { $$ = Automata::new_any(); }
 ;
 
-operand: parenthesis
-    | character
+parenthesis: '('input')' { $$ = $1; }
 ;
 
-character: ALFANUM
-    | '.'
-;
-
-parenthesis: '('expression')'
-;
-
-unary: '*'
-    | '+'
-    | '?'
+unary: '*'              { $$ = Automata('*') }
+    | '+'               { $$ = Automata('+') }
+    | '?'               { $$ = Automata('?') }
 ;
 
 

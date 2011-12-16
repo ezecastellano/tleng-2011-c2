@@ -17,15 +17,15 @@ class Automata {
             //Builds an alfanum automata
             Automata(char);
             //Builds an anychar automata
-            static Automata new_any();
+            static Automata & new_any();
             //determinize the automata
             void determinize();
             
-            Automata operator|(Automata & other);
+            Automata & operator|(Automata & other);
             //Concatenate two automata
-            Automata operator+(Automata & other);
+            Automata & operator+(Automata & other);
             //Apply unary operator
-            Automata apply_op(char);
+            Automata & apply_op(Automata&);
             
             //Match a string
             bool match(string);

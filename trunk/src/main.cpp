@@ -11,6 +11,7 @@ using namespace std;
 
 char* regexp;
 int regexp_index = 0;
+Automata automata;
 
 char get_next() {
     char c = regexp[regexp_index];
@@ -25,7 +26,6 @@ void yyerror (char const *s) {
 
 int yylex (void) {
     char c = get_next();
-    cout << "lex = " << c << endl;
     /* END */
     if (c == EOF)
         return 0;
@@ -48,10 +48,11 @@ int main (int argc, char * argv[]) {
         if(argc > 2) {
             printf("Should parse this file %s\n", argv[3]);
         }
-        //~ build_automata();
         if(yyparse()) {
             cout << "Regexp no fue parseada correctamente." << endl;
         }
+        automata.determinize();
         //Por cada linea de texto, imprimirla si matchea con el automata
+        
         return 0;
 }
