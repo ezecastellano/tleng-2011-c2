@@ -5,17 +5,17 @@
 #include <vector>
 #define DOT 1
 #define LAMBDA 2
-#define END 3
-#define CHAR 4
+#define CHAR 3
 
 using namespace std;
 
 class Automata {
         public:
-            //Builds an empty automata
             Automata();
+            Automata(const Automata&);
             //Builds an alfanum automata
             Automata(char);
+            
             //Builds an anychar automata
             static Automata & new_any();
             //determinize the automata
@@ -35,11 +35,10 @@ class Automata {
                     public:
                         Transition(int code);
                         Transition(char c);
-                        void add_next(Transition & t);
-                        
+                        void add_next(Transition*  t);
+                        char c;
                     private:
                         int code;
-                        char c;
                         vector<Transition*> next;
                         
             };
