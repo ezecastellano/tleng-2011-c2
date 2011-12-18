@@ -33,9 +33,7 @@ void testOr() {
 
 void testOp() {
     Automata a('a');
-    Automata b('?');
-    Automata dot('.');
-    a.apply_op(b);
+    a.apply_op('?');
 }
 
 int main() {

@@ -18,7 +18,9 @@ expression: term        { $$ = $1;}
     | term '|' expression    { $$ = $1 | $2; }
 ;
     
-term: term unary        { $$ = $1.apply_op($2); }
+term: term '+'          { $$ = $1.apply_op('+');}
+    | term '?'          { $$ = $1.apply_op('?');}
+    | term '*'          { $$ = $1.apply_op('*'); }
     | operand           { $$ = $1; }
 ;
 
@@ -33,10 +35,6 @@ character: ALFANUM      { $$ = $1; }
 parenthesis: '('expression')' { $$ = $1; }
 ;
 
-unary: '*'              { $$ = Automata('*') }
-    | '+'               { $$ = Automata('+') }
-    | '?'               { $$ = Automata('?') }
-;
 
 
 %%
