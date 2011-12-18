@@ -1,5 +1,5 @@
 CXXFLAGS = -g -Wall -Wextra
-SOURCES = automata.cpp grep-line.tab.cpp main.cpp
+SOURCES = automata.cpp grep-line.tab.cpp main.cpp matcher.cpp
 BISON = grep-line.ypp
 
 all: grep-line

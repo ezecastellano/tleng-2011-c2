@@ -2,7 +2,7 @@
 #define __AUTOMATA__
 
 #include <string>
-#include <vector>
+#include <map>
 #include <set>
 #define DOT 1
 #define LAMBDA 2
@@ -26,7 +26,7 @@ class Automata {
             //Concatenate two automata
             Automata & operator+(Automata & other);
             //Apply unary operator
-            Automata & apply_op(Automata&);
+            Automata & apply_op(const char cs);
             
             //Builds an anychar automata
             void determinize();
@@ -38,7 +38,7 @@ class Automata {
             
         private:
         
-            class Transition;
+            //class State;
             
             //Call at end to remove all transitions
             void delete_all();
@@ -47,24 +47,28 @@ class Automata {
             void synchronize(const Automata &);
             
             
-            class Transition {
-                    private:
-                            int code;
-                            int count;
+            class State {
                     public:
-                        Transition(int code);
-                        Transition(char c);
-                        char label;
-                        vector<Transition*> next;
+                        State();
                         
-                        void add_next(Transition*  t);
+                        void add_next(State*  t, char c);
+                        //memory stuff
                         bool dereference();
                         void reference();
                         
+                        //fields
+                        int count;
+                        int id;
+                        map< char , State* > next;
+                        
+                    private:
+                        static int next_id;
+                        
+                        
             };
-            Transition* init;
-            Transition* tail;
-            set<Transition*> transitions;
+            State* init;
+            State* tail;
+            set<State*> states;
             
 };
 #endif // __AUTOMATA__

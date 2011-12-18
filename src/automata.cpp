@@ -2,13 +2,11 @@
 #include <iostream>
 #include <cassert>
 #include <map>
+#include <execinfo.h>
 
 using namespace std;
 
-Automata::Automata() {
-    init = NULL;
-    tail = init;
-}
+Automata::Automata() : init(NULL), tail(NULL) { }
 
 Automata::~Automata() {
     init = NULL;
@@ -18,6 +16,7 @@ Automata::~Automata() {
 
 
 Automata & Automata::operator = (const Automata & other) {
+    cout << "Call operator =" << endl;
     if(this == &other)
         return *this;
     delete_all();
@@ -29,13 +28,11 @@ Automata & Automata::operator = (const Automata & other) {
 
 //Builds an alfanum automata
 Automata::Automata(char c){
-    if(c == '.') {
-        init = new Transition(DOT);
-    } else {
-        init = new Transition(c);
-    }
-    tail = init;
-    transitions.insert(init);
+    init = new State();
+    tail = new State();
+    init->add_next(tail, c);
+    states.insert(init);
+    states.insert(tail);
 }
 
 //determinize the automata
@@ -46,28 +43,28 @@ void Automata::determinize(){
 // ---------------  operators ----------------------------------------
 
 Automata & Automata::operator|(Automata & other){
-    Transition* new_init = new Transition(LAMBDA);
-    Transition* new_tail = new Transition(LAMBDA);
+    State* new_init = new State();
+    State* new_tail = new State();
     //Fork
-    new_init->add_next(other.init);
-    new_init->add_next(init);
+    new_init->add_next(other.init, '/');
+    new_init->add_next(init, '/');
     //Join
-    other.tail->add_next(new_tail);
-    tail->add_next(new_tail);
+    other.tail->add_next(new_tail, '/');
+    tail->add_next(new_tail, '/');
     //rename
     init = new_init;
     tail = new_tail;
     
     //memory managment
-    transitions.insert(new_init);
-    transitions.insert(new_tail);
+    states.insert(new_init);
+    states.insert(new_tail);
     synchronize(other);
     return *this;
 }
 //Concatenate two automata
 Automata & Automata::operator+(Automata & other){
     //Bind
-    tail->add_next(other.init);
+    tail->add_next(other.init, '/');
     tail = other.tail;
     
     //MM
@@ -76,92 +73,93 @@ Automata & Automata::operator+(Automata & other){
 }
 
 //Apply unary operator
-Automata & Automata::apply_op(Automata & oper){
-    Transition* new_init = new Transition(LAMBDA);
-    Transition* new_tail = new Transition(LAMBDA);
+Automata & Automata::apply_op(const char c){
+    State* new_init = new State();
+    State* new_tail = new State();
     
     // Extend with lambda
-    new_init->add_next(init);
-    tail->add_next(new_tail);
+    new_init->add_next(init, '/');
+    tail->add_next(new_tail, '/');
     
-    if(oper.init->label == '?' || oper.init->label == '*'){
+    if(c == '?' || c == '*'){
         // Enable not to match this automata.
-        new_init->add_next(new_tail);
+        new_init->add_next(new_tail, '/');
     } 
     
-    if (oper.init->label == '+' || oper.init->label == '*'){
-        // Enable to match  this automata many times.
-        tail->add_next(init);
+    if (c == '+' || c == '*'){
+        // Enable to match  this automata many times.(self loop)
+        tail->add_next(init, '/');
     }
     
     init = new_init;
     tail = new_tail;
     
-    transitions.insert(init);
-    transitions.insert(tail);
+    states.insert(init);
+    states.insert(tail);
     
     return *this;
 }
 
-//~ //Match a string
-//~ bool Automata::match(string){
-    //~ cout << "Match a string" << endl;
-//~ }
+//Match a string
+bool Automata::match(string){
+    cout << "Match a string" << endl;
+    return true;
+}
 
+//---------- MEMORY STUFF -------------------------------------------
 void Automata::synchronize(const Automata & other) {
-    set<Transition*>::const_iterator it;
-    //Saves a reference to each Transition
-    for(it = other.transitions.begin();
-        it != other.transitions.end();
+    set<State*>::const_iterator it;
+    //Saves a reference to each State
+    for(it = other.states.begin();
+        it != other.states.end();
         it++) {
-        transitions.insert(*it);
+        states.insert(*it);
         (*it)->reference();
     }
 }
 
-//---------- MEMORY STUFF -------------------------------------------
 void Automata::delete_all() {
-    for(set<Transition*>::const_iterator it = transitions.begin();
-        it != transitions.end();
+    for(set<State*>::const_iterator it = states.begin();
+        it != states.end();
         it++) {
         if((*it)->dereference())
             delete *it;
     }
-    transitions.clear();
+    states.clear();
 }
 
 
 //----------------- DISPLAY ------------------------------------
 void Automata::mostrar(ostream & o) const {
-    o << "----A:" << endl;
-    set<Transition*>::const_iterator it;
-    for(it = transitions.begin(); it != transitions.end(); it++) {
-        o << "L: " << (*it)->label << endl;
-        vector<Transition*>::const_iterator vit;
-        for(vit = (*it)->next.begin(); vit != (*it)->next.end(); vit++) {
-            o << "\t-->" << (*vit)->label << endl;
-        }
+    o << "----" << endl;
+    set<State*>::const_iterator it;
+    for(it = states.begin(); it != states.end(); it++) {
+        //~ o << "L: " << (*it)->label << endl;
+        map<char, State*>::const_iterator vit;
+        //~ for(vit = (*it)->next.begin(); vit != (*it)->next.end(); vit++) {
+            //~ o << "\t-->" << (*vit)->label << endl;
+        //~ }|
     }
 }
 
-//------   Transition ---------------------
+//------   State ---------------------
+int Automata::State::next_id = 0;
 
-Automata::Transition::Transition(int cod): code(cod), count(1), label((cod == DOT)?'.':'/'){
-    assert(cod != CHAR);
+Automata::State::State() {
+    id = next_id++;
 }
 
-
-Automata::Transition::Transition(char w) : code(CHAR), count(1), label(w){}
-
-void Automata::Transition::add_next(Transition* t){
-    next.push_back(t);
+                        
+void Automata::State::add_next(State*  t, char c){
+    next[c] = t;
 }
 
-bool Automata::Transition::dereference() {
+bool Automata::State::dereference() {
     count--;
     return count == 0;
 }
 
-void Automata::Transition::reference() {
+void Automata::State::reference() {
     count++;
 }
+
