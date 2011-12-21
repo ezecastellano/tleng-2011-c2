@@ -14,8 +14,8 @@
 input: expression       { automata = $1; }
 
 expression: term        { $$ = $1;}
-    | term expression        { $$ = $1 + $2; }
-    | term '|' expression    { $$ = $1 | $2; }
+    | term expression        { $1 += $2; $$ = $1; }
+    | term '|' expression    { $1 |= $2; $$ = $1; }
 ;
     
 term: term '+'          { $$ = $1.apply_op('+');}

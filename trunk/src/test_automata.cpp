@@ -13,23 +13,35 @@ void testCreate() {
     Automata b('b');
     Automata dot('.');
     Automata e;
-}
-
-void testConcat() {
-    Automata a('a');
-    Automata b('b');
-    a + b;
-    a + a + a + a;
+    Automata t(dot);
+    Automata s = t;
+    e.~Automata();
+    s.mostrar(cout);
+    e.mostrar(cout);
+    dot.mostrar(cout);
+    b.mostrar(cout);
+    a.mostrar(cout);
+    
 }
 
 void testOr() {
     Automata a('a');
     Automata b('b');
-    cout << "??" << endl;
     Automata dot('.');
+    a |= a;
     a.mostrar(cout);
-    b | dot;
+    b |= dot;
+    b.mostrar(cout);
 }
+void testConcat() {
+    Automata a('a');
+    Automata b('b');
+    a += b;
+    a += a;
+    a += a;
+    a += a;
+}
+
 
 void testOp() {
     Automata a('a');
@@ -41,9 +53,9 @@ int main() {
     cout << "done1" << endl;
     testCreate();
     cout << "done2" << endl;
-    testConcat();
-    cout << "done3" << endl;
     testOr();
+    cout << "done3" << endl;
+    testConcat();
     cout << "done4" << endl;
     testOp();
     cout << "done5" << endl;

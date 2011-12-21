@@ -1,5 +1,5 @@
 CXXFLAGS = -g -Wall -Wextra
-SOURCES = automata.cpp grep-line.tab.cpp main.cpp matcher.cpp
+SOURCES = automata.cpp grep-line.tab.cpp main.cpp matcher.cpp graph.cpp
 BISON = grep-line.ypp
 
 all: grep-line
@@ -11,8 +11,8 @@ bison: $(BISON)
 grep-line: bison $(SOURCES)
 	$(CXX) $(CXXFLAGS) $(SOURCES) -o grep-line
 
-test-automata: test_automata.cpp automata.cpp automata.hpp
-	$(CXX) $(CXXFLAGS) test_automata.cpp automata.cpp -o test-automata
+test-automata: test_automata.cpp automata.cpp automata.hpp graph.cpp
+	$(CXX) $(CXXFLAGS) test_automata.cpp automata.cpp graph.cpp -o test-automata
 
 test: grep-line test-automata
 	./run-test-regexp
