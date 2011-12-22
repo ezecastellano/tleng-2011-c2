@@ -14,7 +14,7 @@ Automata::Automata(char c) : graph(c) { }
 
 //determinize the automata
 void Automata::determinize(){
-    map<set<int>, bool> dstates;
+    graph.determinize();
     
     
 }
