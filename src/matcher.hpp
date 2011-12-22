@@ -2,14 +2,15 @@
 #define __MATCHER__
 
 #include <iostream>
+#include <string>
+#include "automata.hpp"
 
 class Matcher {
         public:
-            Matcher(Automata&, istream&);
-            string * get_next_matched_line();
+            Matcher(Automata&);
+            char* get_next_matched_line(istream&);
         private:
-            Automata a;
-            istream in;
-}
+            Automata automata;
+};
 
 #endif //__MATCHER__
