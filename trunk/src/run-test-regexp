@@ -1,8 +1,0 @@
-#!/bin/sh
-
-for x in $(cat test-regexp)
-do
-./grep-line $x
-done;
-
-
