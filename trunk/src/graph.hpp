@@ -24,26 +24,32 @@ class LDGraph {
         
         void add_jump();
         void add_inverse_jump();
-        void mostrar(ostream &) const;
+        // Determinize
         void determinize();
+        
+        //observers
+        State init() const;
+        bool is_accepted(State state) const;
+        void mostrar(ostream &) const;
         bool can_move(State state, char c) const;
+        void move_state(State state, char c, Dstate &) const;
+        
     private:
+        void move_dstate(const Dstate & dstate, Dstate &state, char c) const;
         void dtran(const Dstate & dstate, Dstate & res, char c) const;
         void clausura_lambda_dstate(Dstate & dstate) const;
         void clausura_lambda_state(State state, Dstate & res) const;
-        void move_state(State state, char c, Dstate &) const;
-        void move_dstate(const Dstate & dstate, Dstate &state, char c) const;
-        unsigned int  copy_states(const LDGraph &);
-        set< char> available_trans(const Dstate & s);
         void add_transition(State o, State d, char t);
         void add_transition(State o, Dstate d, char t);
         void add_transition(Dstate origins, State destiny, char t);
         void add_transition(Dstate origins, Dstate destinies, char t);
+        set<char> available_trans(const Dstate & s) const;
+        unsigned int  copy_states(const LDGraph &);
         
         //Fields
-        vector< Trans > rels;
-        State init;
-        Dstate tail;
+        vector< Trans > _rels;
+        State _init;
+        Dstate _tail;
         
     
     

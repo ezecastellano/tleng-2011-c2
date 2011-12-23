@@ -11,9 +11,7 @@ string suffix_dot(".dot");
 char id = 'a';
 
 string next_file() {
-    //~ string res = basedir + prefix_dot + id + suffix_dot;
-    string res = prefix_dot + id + suffix_dot;
-    cout << res << endl;
+    string res = basedir + prefix_dot + id + suffix_dot;
     id++;
     return res;
 }
@@ -30,7 +28,7 @@ void testCreate() {
     Automata e;
     Automata t(dot);
     Automata s = t;
-    fstream f;
+    ofstream f;
     f.open(next_file());
     s.mostrar(f);
     f.close();
@@ -54,7 +52,7 @@ void testOr() {
     Automata b('b');
     Automata dot('.');
     a |= a;
-    fstream f(next_file());
+    ofstream f(next_file());
     a.mostrar(f);
     f.close();
     f.open(next_file());
@@ -78,15 +76,11 @@ void testOp() {
 }
 
 int main() {
+    cout << "Testing Automata" << endl;
     simpleTest();
-    cout << "done1" << endl;
     testCreate();
-    cout << "done2" << endl;
     testOr();
-    cout << "done3" << endl;
     testConcat();
-    cout << "done4" << endl;
     testOp();
-    cout << "done5" << endl;
     return 0;
 }

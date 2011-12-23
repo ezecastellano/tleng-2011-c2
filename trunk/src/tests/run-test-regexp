@@ -1,8 +1,8 @@
 #!/bin/sh
 
-for x in $(cat test-regexp)
+for x in $(cat tests/test-regexp)
 do
-./grep-line $x
+cat tests/frases | ./grep-line $x
 done;
 
 

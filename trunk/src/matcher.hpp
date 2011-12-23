@@ -8,7 +8,7 @@
 class Matcher {
         public:
             Matcher(Automata&);
-            char* get_next_matched_line(istream&);
+            bool get_next_matched_line(istream& i, string & res);
         private:
             Automata automata;
 };
