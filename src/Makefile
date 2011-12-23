@@ -1,26 +1,50 @@
+
 CXXFLAGS = -g -Wall -Wextra -std=c++0x
-SOURCES = automata.cpp grep-line.tab.cpp main.cpp matcher.cpp graph.cpp
+LDFLAGS = $(CXXFLAGS)
+ABSOBJ = automata grep-line.tab main matcher graph graph_utils tests/test-automata tests/test-graph
+SOURCES= $(addsuffix .cpp, $(ABSOBJ))
+OBJ = $(addsuffix .o, $(ABSOBJ))
 BISON = grep-line.ypp
+MAIN_OBJ = automata.o grep-line.tab.o main.o matcher.o graph.o graph_utils.o
+GRAPH_TEST_OBJ = graph.o graph_utils.o tests/test-graph.o
+AUTOMATA_TEST_OBJ = automata.o graph.o graph_utils.o tests/test-automata.o
 
-all: grep-line
 
-bison: $(BISON)
-	bison -d -ggraph.dot $(BISON)
-	dot graph.dot -Tpng -o graph.png
+grep-line: bison-build $(MAIN_OBJ)
+	$(CXX) $(CXXFLAGS) $(MAIN_OBJ) -o $@
 
-grep-line: bison $(SOURCES)
-	$(CXX) $(CXXFLAGS) $(SOURCES) -o grep-line
+clean:
+	rm -f *.o tests/*.o
+	rm -f graph/*.png graph/dot/*.dot
+	rm deps
+	rm grep-line test-automata test-graph
 
-test-graph: test_graph.cpp graph.cpp
-	$(CXX) $(CXXFLAGS) test_graph.cpp  graph.cpp -o test-graph
+bison-build: $(BISON)
+	bison -d $(BISON)
 
-test-automata: test_automata.cpp automata.cpp graph.cpp
-	$(CXX) $(CXXFLAGS) test_automata.cpp automata.cpp graph.cpp -o test-automata
+bison:$(BISON)
+	bison -d -ggraph/dots/grammar.dot $(BISON)
+	dot graph/dots/grammar.dot -Tpng -o graph/grammar.png
 
-test: grep-line test-automata test-graph
-	./run-test-regexp
+	
+deps: 
+	$(CXX) $(CXXFLAGS) -MM -MP  $(SOURCES) > $@
+
+-include deps
+
+
+
+test-graph: $(GRAPH_TEST_OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+test-automata: $(AUTOMATA_TEST_OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+build-test: grep-line test-automata test-graph
+
+test: build-test
+	./tests/run-test-regexp
 	./test-automata
 	./test-graph
 
-clean:
-	rm -f grep-line.tab.cpp grep-line.tab.hpp grep-line graph.dot graph.png test-automata
+

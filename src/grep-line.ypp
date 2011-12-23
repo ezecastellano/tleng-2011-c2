@@ -13,7 +13,7 @@
 
 input: expression       { automata = $1; }
 
-expression: term        { $$ = $1;}
+expression: term        { $1.determinize(); $$ = $1;}
     | term expression        { $1 += $2; $$ = $1; }
     | term '|' expression    { $1 |= $2; $$ = $1; }
 ;

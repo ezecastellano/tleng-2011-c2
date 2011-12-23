@@ -3,6 +3,7 @@
 #include <cassert>
 #include <map>
 #include <execinfo.h>
+#include <string>
 
 using namespace std;
 
@@ -15,8 +16,6 @@ Automata::Automata(char c) : graph(c) { }
 //determinize the automata
 void Automata::determinize(){
     graph.determinize();
-    
-    
 }
 
 // ---------------  operators ----------------------------------------
@@ -51,9 +50,19 @@ Automata & Automata::apply_op(const char c){
 }
 
 //Match a string
-bool Automata::match(string){
-    cout << "Match a string" << endl;
+bool Automata::match(string s){
+    State actual = graph.init();
+    string::iterator c = s.begin();
+    while( c != s.end() and graph.can_move(actual, *c) ) {
+        Dstate t;
+        graph.move_state(actual, *c, t);
+        //MUST BE A DETERMINISTIC FINITE AUTOMATA
+        assert(t.size() == 1);
+        actual = *(t.begin());
+        c++;
+    }
     return true;
+    //~ return graph.is_accepted(actual) and c == s.end();
 }
 
 

@@ -1,8 +1,21 @@
 #include "../graph.hpp"
 #include <cassert>
 #include <iostream>
+#include <fstream>
 
 using namespace std;
+
+
+string basedir("graph/dots/");
+string prefix_dot("graph-");
+string suffix_dot(".dot");
+char id = 'a';
+
+string next_file() {
+    string res = basedir + prefix_dot + id + suffix_dot;
+    id++;
+    return res;
+}
 
 
 void testCreate() {
@@ -49,7 +62,10 @@ void completeTest() {
     b.add_inverse_jump();
     b.add_jump();
     b.determinize();
-    b.mostrar(cout);
+    ofstream f;
+    f.open(next_file());
+    b.mostrar(f);
+    f.close();
     a |= b;
     a += a;
     a.add_jump();
@@ -59,6 +75,7 @@ void completeTest() {
 }
 
 int main() {
+    cout << "Testing Graph" << endl;
     testCreate();
     testOr();
     testConcat();

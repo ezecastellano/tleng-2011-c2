@@ -1,6 +1,7 @@
 #include "define.hpp"
 #include "automata.hpp"
 #include "grep-line.tab.hpp"
+#include "matcher.hpp"
 #include <stdio.h>
 #include <ctype.h>
 #include <error.h>
@@ -32,7 +33,7 @@ int yylex (void) {
         return 0;
         
     /* Process ALFANUM.  */
-    if (isalpha(c) || isdigit (c) || c == ' ' ) {
+    if (isalnum(c) || c == ' ' ) {
         yylval = Automata(c);
         return ALFANUM;
     }
@@ -46,14 +47,20 @@ int main (int argc, char * argv[]) {
         }
         regexp = argv[1];
         printf("Regexp: %s\n", regexp);
-        if(argc > 2) {
-            printf("Should parse this file %s\n", argv[3]);
-        }
         if(yyparse()) {
             cout << "Regexp no fue parseada correctamente." << endl;
         }
-        
-        automata.determinize();
-        //Por cada linea de texto, imprimirla si matchea con el automata
+        ifstream f;
+        streambuf * rdbuf = cin.rdbuf();
+        if(argc > 2) {
+            cout << "Should parse this file: " << argv[3] << endl;
+            f.open(argv[3]);
+            rdbuf = f.rdbuf();
+        }
+        istream in(rdbuf);
+        Matcher m(automata);
+        string out;
+        while(m.get_next_matched_line(in, out))
+            cout << out << endl;
         return 0;
 }

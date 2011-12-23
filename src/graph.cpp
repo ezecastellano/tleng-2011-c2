@@ -1,31 +1,22 @@
 #include "graph.hpp"
+#include "graph_utils.hpp"
 #include <cassert>
 #include <stack>
 #include <initializer_list>
 #include <algorithm>
 
 using namespace std;
-/** Helpers **/
 
-ostream& operator <<(ostream& o, const Dstate & d) {
-    o << '[';
-    for(Dstate::iterator i = d.begin(); i != d.end(); i++)
-    {
-        o << ((i != d.begin())? ", " : " ");
-        o << *i;
-    }   
-    o << " ]";
-    return o;
-}
+
 
 #define INIT 0
 #define TAIL 1
 
-LDGraph::LDGraph(char c) : rels(2) {
-    init = INIT;
-    tail = Dstate({TAIL});
+LDGraph::LDGraph(char c) : _rels(2) {
+    _init = INIT;
+    _tail = Dstate({TAIL});
     if( c == '.') {
-        //Graph does not support '.' transition
+        //Graph does not support '.' transition as is
         for( char b = '0'; b < '9' + 1; b++) {
             add_transition(INIT, TAIL, b);
         }
@@ -40,34 +31,29 @@ LDGraph::LDGraph(char c) : rels(2) {
     }
 }
 
-Dstate offset_dstates(Dstate states, int offset) {
-    Dstate res;
-    for(Dstate::iterator it = states.begin(); it != states.end(); it++)
-        res.insert(*it + offset);
-    return res;
-}
+
 
 void LDGraph::operator |=(const LDGraph & other){
     if(this == &other)
         return;
     int offset = copy_states(other);
-    add_transition(init, other.init + offset, '/');
-    add_transition(offset_dstates(other.tail, offset), tail, '/');
+    add_transition(_init, other._init + offset, '/');
+    add_transition(offset_dstates(other._tail, offset), _tail, '/');
 }
 
 void LDGraph::operator +=(const LDGraph & other){
     unsigned int offset = copy_states(other);
-    add_transition(tail, other.init + offset,  '/');
-    tail = offset_dstates(other.tail, offset);;
+    add_transition(_tail, other._init + offset,  '/');
+    _tail = offset_dstates(other._tail, offset);;
 }
 
 
 unsigned int LDGraph::copy_states(const LDGraph & other) {
-    unsigned int offset = rels.size();
-    unsigned int osize = other.rels.size();
-    rels.resize(other.rels.size() + offset);
+    unsigned int offset = _rels.size();
+    unsigned int osize = other._rels.size();
+    _rels.resize(osize + offset);
     for(unsigned int i = 0; i < osize; i++) {
-        Trans actual = other.rels[i];
+        Trans actual = other._rels[i];
         for(mit it = actual.begin(); it != actual.end(); it++) {
             char k = it->first;
             for(Dstate::iterator sit = it->second.begin();
@@ -82,15 +68,15 @@ unsigned int LDGraph::copy_states(const LDGraph & other) {
 }
 
 void LDGraph::add_jump(){
-    add_transition(init, tail, '/');
+    add_transition(_init, _tail, '/');
 }
 
 void LDGraph::add_inverse_jump(){
-    add_transition(tail, init, '/');
+    add_transition(_tail, _init, '/');
 }
 
 void LDGraph::add_transition(State origin, State destiny, char t) {
-    rels[origin][t].insert(destiny);
+    _rels[origin][t].insert(destiny);
 }
 
 void LDGraph::add_transition(State origin, Dstate destinies, char t) {
@@ -122,7 +108,7 @@ void LDGraph::clausura_lambda_dstate(Dstate & dstate) const {
 }
 void LDGraph::clausura_lambda_state(State state, Dstate & res) const {
     res.insert(state);
-    for(mit it = rels[state].begin(); it != rels[state].end(); it++){
+    for(mit it = _rels[state].begin(); it != _rels[state].end(); it++){
         if(it->first == '/' )
             for( set<State>::const_iterator sit = it->second.begin();
                  sit != it->second.end();
@@ -134,7 +120,7 @@ void LDGraph::clausura_lambda_state(State state, Dstate & res) const {
 }
 void LDGraph::move_state(State state, char c, Dstate & res) const {
     //assert(can_move(state, c));
-    Dstate follow = rels[state].find(c)->second;
+    Dstate follow = _rels[state].find(c)->second;
     for( Dstate::iterator dit = follow.begin();
         dit != follow.end();
         dit++) {
@@ -145,7 +131,7 @@ void LDGraph::move_state(State state, char c, Dstate & res) const {
 }
 
 bool LDGraph::can_move(State state, char c) const {
-    return rels[state].count(c);
+    return _rels[state].count(c);
 }
 void LDGraph::move_dstate(const Dstate & dstate, Dstate & res, char c) const {
     assert(c != '/');
@@ -157,10 +143,10 @@ void LDGraph::move_dstate(const Dstate & dstate, Dstate & res, char c) const {
     }
 }
 
-set< char> LDGraph::available_trans(const Dstate & s) {
+set< char> LDGraph::available_trans(const Dstate & s) const {
     set<char> res;
     for(Dstate::const_iterator st = s.begin(); st != s.end(); st++) {
-        Trans m = rels[*st];
+        Trans m = _rels[*st];
         for(mit it = m.begin(); it != m.end(); it++) {
             if(it->first != '/')
                 res.insert(it->first);
@@ -169,53 +155,18 @@ set< char> LDGraph::available_trans(const Dstate & s) {
     return res;
 }
 
-State find(vector< Dstate > & dstates, const Dstate & s){
-    for(State j = 0; j < dstates.size(); j++) {
-        if( dstates[j].size() == s.size() 
-            and equal(dstates[j].begin(), dstates[j].end(), s.begin()))
-            return j;
-    }
-    return dstates.size();
+State LDGraph::init() const {
+    return _init;
 }
 
-Dstate find_or_create(   vector< Dstate > & dstates, 
-                        vector< Trans > & relations, 
-                        stack < State > & pending_dstates,
-                        Dstate & s) {
-    State follow = find(dstates, s);
-    if(follow >= dstates.size()) {
-        //Mark state as checked
-        dstates.push_back(s);
-        follow = dstates.size() - 1;
-        pending_dstates.push(follow);
-        relations.resize(relations.size() + 1);
-    }
-    return Dstate({follow});
+bool LDGraph::is_accepted(State t) const {
+    return _tail.count(t);
 }
 
-void print_dstate_trans(Dstate & s, Dstate & d, char c) {
-    cerr << s << " -- " << c << " --> " << d << endl;
-}
-
-bool set_match(const Dstate one, const Dstate two) {
-    for( Dstate::const_iterator it = one.begin();
-        it != one.end();
-        it++) {
-        if(two.count(*it))
-            return true;
-    }
-    return false;
-        
-}
-void add_to_tail(const Dstate & n, Dstate & new_tail, const Dstate & old_tail, State new_state) {
-    if( set_match(n,old_tail) )
-        new_tail.insert(new_state);
-    return;
-}
 
 
 void LDGraph::determinize() {
-    Dstate initial({init});
+    Dstate initial({_init});
     clausura_lambda_dstate(initial);
     vector< Dstate > dstates({initial});
     vector< Trans > relations(1);
@@ -235,23 +186,23 @@ void LDGraph::determinize() {
             relations[d][*chs] = find_or_create(dstates, relations, pending_dstates, s);
         }
         //IF this state contains a end state, i'll add it to the end.
-        add_to_tail(dstates[d], new_tail, tail, d);
+        add_to_tail(dstates[d], new_tail, _tail, d);
     }
-    rels = relations;
-    tail = new_tail;
+    _rels = relations;
+    _tail = new_tail;
 }
 
 
 void LDGraph::mostrar(ostream & o) const {
-    cout << "digraph  {" << endl;
-    for(unsigned int i = 0; i < rels.size(); i++) {
+    o << "digraph  {" << endl;
+    for(unsigned int i = 0; i < _rels.size(); i++) {
         o << i;
-        o << ((i == init)? "[ label=\"Init\" ]" : " ");
-        o << ((tail.count(i))? "[ label=\"Tail\" ]" : " ");
+        o << ((i == _init)? "[ label=\"Init\" ]" : " ");
+        o << ((_tail.count(i))? "[ label=\"Tail\" ]" : " ");
         o << endl;
         mit it;
-        for(it = rels[i].begin(); 
-            it != rels[i].end();
+        for(it = _rels[i].begin(); 
+            it != _rels[i].end();
             it++) {
             for( Dstate::iterator sit = it->second.begin();
                 sit != it->second.end();
@@ -265,7 +216,7 @@ void LDGraph::mostrar(ostream & o) const {
             }
         }
     }
-    cout << '}' << endl;
+    o << '}' << endl;
 }
 
 
