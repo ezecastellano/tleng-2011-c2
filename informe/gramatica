@@ -1,0 +1,21 @@
+G = < {Expression},{caracter, |, *, +, ?, ., (, )},P,E >
+
+P:
+
+Expression --> Term        
+    | Term Expression      
+    | Term | Expression    
+
+    
+Term --> Term + 
+    | Term ? 
+    | Term *
+    | Operand
+
+Operand --> Parenthesis  
+    | Character       
+
+Character --> caracter    
+    | .
+
+Parenthesis --> (Expression)

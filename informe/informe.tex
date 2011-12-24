@@ -1,0 +1,128 @@
+\documentclass[a4paper,spanish] {article} 
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{amssymb}
+\pagestyle{empty}
+
+\newcommand{\real}{\ensuremath{\mathbb{R}}}
+
+\usepackage [spanish] {babel} 
+\usepackage [latin1]{inputenc}
+\usepackage{graphicx}
+\usepackage{caratula}
+\usepackage{subfig}
+\usepackage{dsfont}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{algorithmic}
+\usepackage{sidecap}
+\usepackage{ulem} 
+
+\parindent = 0 pt
+\parskip = 11 pt
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\pagestyle{empty}
+
+
+
+%links
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,%
+    citecolor=blue,%
+    filecolor=blue,%
+    linkcolor=blue,%
+    urlcolor=blue
+}
+
+\def\dashuline{\bgroup 
+\ifdim\ULdepth=\maxdimen  % Set depth based on font, if not set already
+\settodepth\ULdepth{(j}\advance\ULdepth.4pt\fi
+\markoverwith{\kern.15em
+\vtop{\kern\ULdepth \hrule width .3em}%
+\kern.15em}\ULon}
+
+
+\addtolength{\oddsidemargin}{-1in}
+\addtolength{\textwidth}{2in}
+
+
+\begin{document}
+\pagestyle{headings}
+
+\newpage
+
+\materia{Teor\'ia de Lenguajes}
+\submateria{Segundo Cuatrimestre del 2011}
+\titulo{Trabajo Pr\'actico}
+
+
+\integrante{Ezequiel Castellano}{161/08}{ezequielcastellano@gmail.com}
+\integrante{Mariano Semelman}{143/08}{ marianosemelman@gmail.com}
+
+\maketitle
+
+\newpage
+\tableofcontents
+\newpage
+\newpage
+\section{Gram\'atica}
+
+Optamos por describir la gram\'atica de manera tal que no tenga conflictos de ningún tipo (reduce/reduce o shift/reduce). A su vez no perdimos ni agregamos poder de expresividad, ya que de esta manera podemos representar las mismas cadenas que antes. 
+
+La gram\'atica utilizada es la siguiente:
+
+\lstinputlisting{./gramatica.}
+\bigskip
+\bigskip
+
+\section{Implementaci\'on}
+
+\section{Informaci\'on y requerimientos de software}
+
+En esta secci\'on se indicar\'an versiones, herramientas, compiladores y todo lo necesario para la realizaci\'on del trabajo pr\'actico.
+
+\subsection{Requerimientos}
+
+//TODO: Completar que librerias usamos. Se que son las de C++ y esas cosas, pero no se ni como se dice y no quiero hacer lio, jeje. 
+
+Es necesario tener instaladas las librerias para compilar en c++ (GNU GCC)y Bison. El trabajo pr\'actico fue implementado sobre Ubuntu 11.05.
+
+\subsection{Compilar}
+
+Utilizar el MakeFile provisto con el c\'odigo, el cual se encuentra detallado en el ap\'endice.
+
+\section{Casos de Prueba}
+
+//TODO: Estos fueron los que usamos al comienzo para ver que la gram\'atica sea v\'alida, falta completar en que casos la deber\'ia aceptar y en cuales no. 
+
+Las casos de prueba utilizados para validar la gram\'atica fueron los siguientes:
+
+\lstinputlisting{../src/tests/test-regexp.}
+\bigskip
+\bigskip
+
+\section{Resultados}
+
+//TODO: Completar cuales fueron los resultados obtenidos. 
+
+\section{Conclusiones}
+
+//TODO: Completar las conclusiones. 
+
+Nos fue muy útil para chequear que la gram\'atica no tenga conflictos el tener una herramienta como Bison. 
+
+\section{Ap\'endice}
+
+\subsection{MakeFile}
+
+\lstinputlisting{../src/MakeFile.}
+\bigskip
+\bigskip
+
+\end{document}
