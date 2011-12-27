@@ -58,8 +58,13 @@ int main (int argc, char * argv[]) {
             rdbuf = f.rdbuf();
         }
         istream in(rdbuf);
+        ofstream g("graph/dots/grep-line.dot");
+        automata.determinize();
+        automata.mostrar(g);
+        g.close();
         Matcher m(automata);
         string out;
+        cout << "Matched lines are: " << endl;
         while(m.get_next_matched_line(in, out))
             cout << out << endl;
         return 0;

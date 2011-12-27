@@ -21,6 +21,7 @@ class LDGraph {
         LDGraph(char c);
         void operator |=(const LDGraph &);
         void operator +=(const LDGraph &);
+        LDGraph & operator =(const LDGraph &);
         
         void add_jump();
         void add_inverse_jump();

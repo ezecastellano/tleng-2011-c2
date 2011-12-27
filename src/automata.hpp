@@ -29,14 +29,23 @@ class Automata {
             //Match a string
             bool match(string);
             
+            Automata & operator = (const Automata & other);
             
             void mostrar(ostream&) const;
             
+            
+            int id;
+            
+        protected:
+            static int getId() { return global_id++; }
+            
         private:
-        
+            static int global_id;
             LDGraph graph;
             
 };
+
+//~ int global_id = 0;
 
 ostream& operator <<(ostream& o, const Automata & a);
 #endif // __AUTOMATA__

@@ -1,25 +1,10 @@
 #include "../automata.hpp"
+#include "../debugging.hpp"
 #include <cassert>
 #include <iostream>
 #include <fstream>
 
 using namespace std;
-
-string basedir("graph/dots/");
-string prefix_dot("automata-");
-string suffix_dot(".dot");
-char id = 'a';
-
-string next_file() {
-    string res = basedir + prefix_dot + id + suffix_dot;
-    id++;
-    return res;
-}
-
-
-void simpleTest(){
-    Automata a;
-}
 
 void testCreate() {
     Automata a('a');
@@ -28,22 +13,13 @@ void testCreate() {
     Automata e;
     Automata t(dot);
     Automata s = t;
-    ofstream f;
-    f.open(next_file());
-    s.mostrar(f);
-    f.close();
-    f.open(next_file());
-    e.mostrar(f);
-    f.close();
-    f.open(next_file());
-    dot.mostrar(f);
-    f.close();
-    f.open(next_file());
-    b.mostrar(f);
-    f.close();
-    f.open(next_file());
-    a.mostrar(f);
-    f.close();
+    t = e;
+    guardar(s);
+    guardar(t);
+    guardar(e);
+    guardar(dot);
+    guardar(b);
+    guardar(a);
     
 }
 
@@ -52,13 +28,9 @@ void testOr() {
     Automata b('b');
     Automata dot('.');
     a |= a;
-    ofstream f(next_file());
-    a.mostrar(f);
-    f.close();
-    f.open(next_file());
+    guardar(a);
     b |= dot;
-    b.mostrar(f);
-    f.close();
+    guardar(b);
 }
 void testConcat() {
     Automata a('a');
@@ -75,12 +47,34 @@ void testOp() {
     a.apply_op('?');
 }
 
+void finalTest() {
+    Automata a('a');
+    Automata b('b');
+    Automata c('c');
+    Automata d('d');
+    c += a; // ca
+    c.apply_op('+'); // (ca)+
+    b+=c; // b(ca)+
+    b+=d;
+    b.determinize();
+    guardar(b);
+}
+
+void testO() {
+    Automata a('a');
+    Automata b('b');
+    a |= b;
+    a.determinize();
+    guardar(a, "testO");
+}
+
 int main() {
     cout << "Testing Automata" << endl;
-    simpleTest();
     testCreate();
     testOr();
     testConcat();
     testOp();
+    finalTest();
+    testO();
     return 0;
 }

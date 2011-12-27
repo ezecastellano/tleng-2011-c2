@@ -2,16 +2,30 @@
 #include <iostream>
 #include <cassert>
 #include <map>
-#include <execinfo.h>
 #include <string>
 
 using namespace std;
 
-Automata::Automata() : graph('/') { }
+int Automata::global_id = 0;
+
+
+Automata::Automata() : graph('/') {
+    id = getId();
+}
 
 
 //Builds an alfanum automata
-Automata::Automata(char c) : graph(c) { }
+Automata::Automata(char c) : graph(c) {
+    id = getId();
+}
+
+Automata & Automata::operator =(const Automata & other) {
+    if(this != &other) {
+        graph = other.graph;
+        id = other.id;
+    }
+    return *this;
+}
 
 //determinize the automata
 void Automata::determinize(){
@@ -24,7 +38,7 @@ void Automata::operator|=(Automata & other){
     if(this == &other)
         return;
     graph |= other.graph;
-    determinize();
+    //~ determinize();
     return;
 }
 //Concatenate two automata
@@ -35,7 +49,6 @@ void Automata::operator+=(Automata & other){
 
 //Apply unary operator
 Automata & Automata::apply_op(const char c){
-    
     if(c == '?' || c == '*'){
         // Enable not to match this automata.
         graph.add_jump();
@@ -45,7 +58,7 @@ Automata & Automata::apply_op(const char c){
         // Enable to match  this automata many times.(self loop)
         graph.add_inverse_jump();
     }
-    determinize();
+    //~ determinize();
     return *this;
 }
 
@@ -61,15 +74,15 @@ bool Automata::match(string s){
         actual = *(t.begin());
         c++;
     }
-    return true;
-    //~ return graph.is_accepted(actual) and c == s.end();
+    // Estado final y cadena consumida.
+    return graph.is_accepted(actual) and c == s.end();
 }
 
 
 
 //----------------- DISPLAY ------------------------------------
 void Automata::mostrar(ostream & o) const {
-    o << graph << endl;
+    o << graph;
 }
 ostream& operator <<(ostream& o, const Automata & a) {
     a.mostrar(o);
