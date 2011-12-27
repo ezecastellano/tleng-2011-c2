@@ -26,9 +26,21 @@ LDGraph::LDGraph(char c) : _rels(2) {
         for( char b = 'a'; b < 'z' + 1; b++) {
             add_transition(INIT, TAIL, b);
         }
+        add_transition(INIT, TAIL, ' ');
     } else {
         add_transition(INIT, TAIL, c);
     }
+}
+
+LDGraph & LDGraph::operator =(const LDGraph & other) {
+    //~ cout << "Copying" << endl;
+    if(this != &other) {
+        _rels.clear();
+        assert(copy_states(other) == 0);
+        _init = other._init;
+        _tail = other._tail;
+    }
+    return *this;
 }
 
 
@@ -44,10 +56,12 @@ void LDGraph::operator |=(const LDGraph & other){
 void LDGraph::operator +=(const LDGraph & other){
     unsigned int offset = copy_states(other);
     add_transition(_tail, other._init + offset,  '/');
-    _tail = offset_dstates(other._tail, offset);;
+    _tail = offset_dstates(other._tail, offset);
 }
 
-
+/** Given a LDGraph, it appends all its states to this
+ * renaming them with new ids. 
+ * returns the beggining of the new states*/
 unsigned int LDGraph::copy_states(const LDGraph & other) {
     unsigned int offset = _rels.size();
     unsigned int osize = other._rels.size();
@@ -197,8 +211,10 @@ void LDGraph::mostrar(ostream & o) const {
     o << "digraph  {" << endl;
     for(unsigned int i = 0; i < _rels.size(); i++) {
         o << i;
-        o << ((i == _init)? "[ label=\"Init\" ]" : " ");
-        o << ((_tail.count(i))? "[ label=\"Tail\" ]" : " ");
+        o << "[ ";
+        o << ((i == _init)? "label=\"Init\"" : " ");
+        o << ((_tail.count(i))? "style=\"filled\"" : " ");
+        o << " ]";
         o << endl;
         mit it;
         for(it = _rels[i].begin(); 

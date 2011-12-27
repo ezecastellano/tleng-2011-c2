@@ -1,21 +1,10 @@
 #include "../graph.hpp"
+#include "../debugging.hpp"
 #include <cassert>
 #include <iostream>
 #include <fstream>
 
 using namespace std;
-
-
-string basedir("graph/dots/");
-string prefix_dot("graph-");
-string suffix_dot(".dot");
-char id = 'a';
-
-string next_file() {
-    string res = basedir + prefix_dot + id + suffix_dot;
-    id++;
-    return res;
-}
 
 
 void testCreate() {
@@ -24,11 +13,6 @@ void testCreate() {
     LDGraph dot('.');
     LDGraph t(dot);
     LDGraph s = t;
-    //~ s.mostrar(cout);
-    //~ e.mostrar(cout);
-    //~ dot.mostrar(cout);
-    //~ b.mostrar(cout);
-    //~ a.mostrar(cout);
     
 }
 
@@ -37,10 +21,8 @@ void testOr() {
     LDGraph b('b');
     LDGraph dot('.');
     a |= a;
-    //~ a.mostrar(cout);
     b |= dot;
-    //~ b.determinize();
-    //~ b.mostrar(cout);
+    b.determinize();
 }
 void testConcat() {
     LDGraph a('a');
@@ -62,10 +44,7 @@ void completeTest() {
     b.add_inverse_jump();
     b.add_jump();
     b.determinize();
-    ofstream f;
-    f.open(next_file());
-    b.mostrar(f);
-    f.close();
+    guardar(b);
     a |= b;
     a += a;
     a.add_jump();
@@ -74,11 +53,23 @@ void completeTest() {
     //~ a.mostrar(cout);
 }
 
+void testthree() {
+    LDGraph a('a');
+    LDGraph b('b');
+    a += b; // ab
+    a.determinize();
+    guardar(a);
+    a.add_inverse_jump(); // (ab)+
+    a.determinize();
+    guardar(a);
+}
+
 int main() {
     cout << "Testing Graph" << endl;
     testCreate();
     testOr();
     testConcat();
     completeTest();
+    testthree();
     return 0;
 }
