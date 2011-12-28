@@ -33,7 +33,6 @@ LDGraph::LDGraph(char c) : _rels(2) {
 }
 
 LDGraph & LDGraph::operator =(const LDGraph & other) {
-    //~ cout << "Copying" << endl;
     if(this != &other) {
         _rels.clear();
         assert(copy_states(other) == 0);
@@ -61,18 +60,21 @@ void LDGraph::operator +=(const LDGraph & other){
 
 /** Given a LDGraph, it appends all its states to this
  * renaming them with new ids. 
- * returns the beggining of the new states*/
+ * returns the id of the first state (they are numbered in order)*/
 unsigned int LDGraph::copy_states(const LDGraph & other) {
     unsigned int offset = _rels.size();
     unsigned int osize = other._rels.size();
     _rels.resize(osize + offset);
     for(unsigned int i = 0; i < osize; i++) {
+        //For each state
         Trans actual = other._rels[i];
         for(mit it = actual.begin(); it != actual.end(); it++) {
+            //For each state's transition
             char k = it->first;
             for(Dstate::iterator sit = it->second.begin();
                 sit != it->second.end();
                 sit++) {
+                //For each destiny state
                 int v = *sit + offset;
                 add_transition(i + offset, v, k);
             }

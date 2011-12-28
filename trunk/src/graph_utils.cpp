@@ -38,21 +38,6 @@ Dstate offset_dstates(Dstate states, int offset) {
     return res;
 }
 
-ostream& operator <<(ostream& o, const Dstate & d) {
-    o << '[';
-    for(Dstate::iterator i = d.begin(); i != d.end(); i++)
-    {
-        o << ((i != d.begin())? ", " : " ");
-        o << *i;
-    }   
-    o << " ]";
-    return o;
-}
-
-void print_dstate_trans(Dstate & s, Dstate & d, char c) {
-    cerr << s << " -- " << c << " --> " << d << endl;
-}
-
 bool set_match(const Dstate one, const Dstate two) {
     for( Dstate::const_iterator it = one.begin();
         it != one.end();

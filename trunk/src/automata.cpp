@@ -6,24 +6,16 @@
 
 using namespace std;
 
-int Automata::global_id = 0;
 
-
-Automata::Automata() : graph('/') {
-    id = getId();
-}
+Automata::Automata() : graph('/') { }
 
 
 //Builds an alfanum automata
-Automata::Automata(char c) : graph(c) {
-    id = getId();
-}
+Automata::Automata(char c) : graph(c) { }
 
 Automata & Automata::operator =(const Automata & other) {
-    if(this != &other) {
+    if(this != &other) 
         graph = other.graph;
-        id = other.id;
-    }
     return *this;
 }
 
@@ -38,7 +30,6 @@ void Automata::operator|=(Automata & other){
     if(this == &other)
         return;
     graph |= other.graph;
-    //~ determinize();
     return;
 }
 //Concatenate two automata
@@ -58,7 +49,6 @@ Automata & Automata::apply_op(const char c){
         // Enable to match  this automata many times.(self loop)
         graph.add_inverse_jump();
     }
-    //~ determinize();
     return *this;
 }
 

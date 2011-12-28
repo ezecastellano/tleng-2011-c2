@@ -7,7 +7,8 @@ Matcher::Matcher(Automata& a){
 
 bool Matcher::get_next_matched_line(istream& i, string & res){
     bool matches = false;
-    while(not matches and not i.eof()) {
+    i.peek();
+    while(not matches and i.good()) {
         getline(i, res);
         matches = automata.match(res);
     }
