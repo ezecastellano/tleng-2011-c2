@@ -86,7 +86,7 @@ La implementación fue realizada en el lenguaje C++, utilizando la herramienta Bi
 
 Para la implementación utilizamos la estructura Autómata, que internamente es un grafo dirigido y etiquetado, por eso su nombre LDGraph (Labeled Derived Graph).
 
-En la clase Autómata se implementaron todos los métodos necesarios para poder concatenar autómatas, demterminizarlos, mostrarlos, aplicar un operador o matchear un string. 
+En la clase Autómata se implementaron todos los métodos necesarios para poder concatenar autómatas, determinizarlos, mostrarlos, aplicar un operador o matchear un string. 
 
 Por otra parte la clase LDGrafo consta de un estado de inicial, un conjunto de estados finales y un vector de transiciones como estructura. 
 
@@ -102,7 +102,7 @@ En esta secci\'on se indicar\'an versiones, herramientas, compiladores y todo lo
 
 \subsection{Requerimientos}
 
-El trabajo pr\'actico fue implementado sobre Ubuntu 11.05. Las siguientes instrucciones son válidas en cualquier sistema operativo Linux. De utilizar otro sistema operativo o realizar los pasos análogos.
+El trabajo pr\'actico fue implementado sobre Ubuntu 11.05. Las siguientes instrucciones son válidas en cualquier sistema operativo Linux. De utilizar otro sistema operativo realizar los pasos análogos.
 
 Es necesario tener instaladas las librerias para compilar en C++ y Bison.
 
@@ -110,9 +110,9 @@ Para instalar las librerias de Build Essencial (incluye librerias para compilar 
 
 Para instalar las librerias de Bison: sudo apt-get install bison bison-doc.
 
-Opcional: Para poder renderizar los archivos .dot con el ejecutable dot. 
+(Opcional): Para poder renderizar los archivos .dot es necesario tener instalado el ejecutable dot. 
 
-Para instalar las librerias para renderizar dot: sudo apt-get install graphviz.
+Para instalarlo: sudo apt-get install graphviz.
 
 \subsection{Compilar}
 
@@ -120,9 +120,9 @@ Utilizar el MakeFile provisto con el c\'odigo, el cual se encuentra detallado en
 
 \begin{itemize}
 
- \item Para compilar solamente realizar: make.
+ \item Para compilar solamente: make.
 
- \item Para compilar los tests realizar: make build-test.
+ \item Para compilar los tests: make build-test.
 
  \item Para compilar los tests y ejecutarlos: make test.
 
@@ -136,9 +136,9 @@ Utilizar el MakeFile provisto con el c\'odigo, el cual se encuentra detallado en
 
 Para ejecutar el programa se deberá estar posicionado en el directorio donde se encuentre el ejecutable, es decir el directorio donde se compiló.
 
-El archivo ejecutable se llama grep-line y para utilizarlo deberá escribirse la siguiente sentencia: ./grep-line regexp [file] 
+El archivo ejecutable se llama grep-line y para utilizarlo deberá escribirse la siguiente sentencia: ./grep-line regexp [file] .
 
-El primer parámetro es la expresion regular, mientras que el segundo parámetro opcional es un archivo con las cadenas a matchear, en caso de no utilizarse matchea por entrada estandard.
+El primer parámetro es la expresion regular, mientras que el segundo parámetro opcional es un archivo con las cadenas a matchear, en caso de no utilizarse matchea por entrada standard.
 
 Para ver gráficos del autómata generado se deberá agregar el flag -i. 
 
@@ -165,12 +165,12 @@ Nos fue muy útil para chequear que la gram\'atica no tenga conflictos el tener u
 
 \section{Ap\'endice}
 
-\subsection{MakeFile}
+\subsection{Makefile}
 
 \lstinputlisting[language=make]{../src/Makefile}
 \bigskip
 
-\subsection{Automata}
+\subsection{Autómata}
 
 \subsubsection{Headers}
 \lstinputlisting[language=C++]{../src/automata.hpp}
@@ -180,15 +180,19 @@ Nos fue muy útil para chequear que la gram\'atica no tenga conflictos el tener u
 \lstinputlisting[language=C++]{../src/automata.cpp}
 \bigskip
 
-
 \subsection{Grafo}
 
 \subsubsection{Headers}
-\lstinputlisting[language=C++]{../src/grafo.hpp}
+\lstinputlisting[language=C++]{../src/graph.hpp}
 \bigskip
 
 \subsubsection{Impementación}
-\lstinputlisting[language=C++]{../src/grafo.cpp}
+\lstinputlisting[language=C++]{../src/graph.cpp}
+\bigskip
+
+\subsection{Gramática}
+
+\lstinputlisting{../src/grep-line.ypp}
 \bigskip
 
 \end{document}
