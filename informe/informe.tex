@@ -73,12 +73,139 @@
 \newpage
 \section{Gram\'atica}
 
-Optamos por describir la gram\'atica de manera tal que no tenga conflictos de ningún tipo (reduce/reduce o shift/reduce). A su vez no perdimos ni agregamos poder de expresividad, ya que de esta manera podemos representar las mismas cadenas que antes. 
+Describimos la gram\'atica de manera tal que no tenga conflictos de ningún tipo (reduce/reduce o shift/reduce). A su vez no perdimos ni agregamos poder de expresividad, ya que de esta manera podemos representar las mismas cadenas que antes. 
 
-La gram\'atica utilizada es la siguiente:
+\subsection{Definición}
 
-\lstinputlisting{./gramatica}
-\bigskip
+La gram\'atica utilizada en la implementación de este trabajo práctico es la siguiente:
+
+\begin{lstlisting}
+
+G = < {Expression},{caracter, |, *, +, ?, ., (, )},P,E >
+
+P:
+
+Expression --> Term        
+    | Term Expression      
+    | Term | Expression    
+
+    
+Term --> Term + 
+    | Term ? 
+    | Term *
+    | Operand
+
+Operand --> Parenthesis  
+    | Character       
+
+Character --> caracter    
+    | .
+
+Parenthesis --> (Expression)
+
+\end{lstlisting}
+
+
+\subsection{Razonamiento}
+
+El razonamiento que nos llevo a tomar la decisión de esta gramática a partir de la brindada por la cátedra fue el siguiente.
+
+Inicialmente la gramática tenía las siguientes producciones.
+
+\begin{lstlisting}
+
+E --> EE
+    | E|E
+    | E*
+    | E+
+    | E?
+    | (E)
+    | caracter
+    | .
+
+\end{lstlisting}
+
+Primero separamos los terminales en una producción aparte. 
+
+\begin{lstlisting}
+E --> EE
+    | E|E
+    | E*
+    | E+
+    | E?
+    | (E)
+    | C
+
+C --> caracter
+    | .
+\end{lstlisting}
+
+Luego separamos al paréntesis en una producción aparte. 
+
+\begin{lstlisting}
+
+E --> EE
+    | E|E
+    | E*
+    | E+
+    | E?
+    | P
+    | C
+
+C --> caracter
+    | .
+
+P --> (E)
+
+\end{lstlisting}
+
+Luego unificamos caracteres y paréntesis en operandos, que son elementos que ya consideramos cerrados, pero sin operadores aplicados. 
+
+\begin{lstlisting}
+
+E --> EE
+    | E|E
+    | E*
+    | E+
+    | E?
+    | O
+
+O --> P
+    | C
+
+C --> caracter
+    | .
+
+P --> (E)
+
+\end{lstlisting}
+
+Luego desamibiguamos la gramática dividiendo en expresiones y términos. Y al hacer esto, definimos los términos como elementos ya cerrados, pero que pueden tener operadores aplicados (0 o más). 
+
+\begin{lstlisting}
+
+E --> TE
+    | T|E
+    | T
+
+T --> T*
+    | T+
+    | T?
+    | O
+
+O --> P
+    | C
+
+C --> caracter
+    | .
+
+P --> (E)
+
+\end{lstlisting}
+
+De esta forma y luego de chequear en Bison que la gramática no tuviera confilctos de ningún tipo decidimos utilizarla en la implementación de nuestro trabajo práctico.
+
+Para ver más detalles de la implementación en Bison, ver la sección Gramática del apéndice. 
 
 \section{Implementaci\'on}
 
