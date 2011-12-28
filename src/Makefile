@@ -16,8 +16,9 @@ grep-line: bison-build $(MAIN_OBJ)
 clean:
 	rm -f *.o tests/*.o
 	rm -f graph/*.png graph/dot/*.dot
-	rm -f deps
+	rm -f grep-line.tab.*
 	rm -f grep-line test-automata test-graph
+	rm -f deps
 
 bison-build: $(BISON)
 	bison -d $(BISON)
@@ -26,6 +27,7 @@ bison:$(BISON)
 	bison -d -ggraph/dots/grammar.dot $(BISON)
 	dot graph/dots/grammar.dot -Tpng -o graph/grammar.png
 
+grep-line.tab.cpp: bison-build
 	
 deps: 
 	$(CXX) $(CXXFLAGS) -MM -MP  $(SOURCES) > $@
