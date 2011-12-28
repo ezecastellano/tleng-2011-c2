@@ -28,14 +28,10 @@ void guardar(Automata a) {
 }
 
 void guardar(Automata a, const string & name) {
-    stringstream out;
-    out << a.id;
-    string postname = out.str() + '-' + name;
-    ofstream f(next_file(postname));
+    ofstream f(next_file(name));
     a.mostrar(f);
     f.close();
 }
-
 
 void guardar(LDGraph a) {
     ofstream f(next_file());

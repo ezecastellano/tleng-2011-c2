@@ -1,4 +1,3 @@
-
 CXXFLAGS = -g -Wall -Wextra -std=c++0x
 LDFLAGS = $(CXXFLAGS)
 ABSOBJ = automata grep-line.tab main matcher graph graph_utils tests/test-automata tests/test-graph debugging

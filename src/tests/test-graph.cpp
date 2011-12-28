@@ -48,9 +48,6 @@ void completeTest() {
     a |= b;
     a += a;
     a.add_jump();
-    //~ a.determinize();
-    //~ a.mostrar(cout);
-    //~ a.mostrar(cout);
 }
 
 void testthree() {
