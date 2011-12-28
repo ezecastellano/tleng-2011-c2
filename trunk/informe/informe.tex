@@ -77,11 +77,24 @@ Optamos por describir la gram\'atica de manera tal que no tenga conflictos de ni
 
 La gram\'atica utilizada es la siguiente:
 
-\lstinputlisting{./gramatica.}
-\bigskip
+\lstinputlisting{./gramatica}
 \bigskip
 
 \section{Implementaci\'on}
+
+La implementación fue realizada en el lenguaje C++, utilizando la herramienta Bison. 
+
+Para la implementación utilizamos la estructura Autómata, que internamente es un grafo dirigido y etiquetado, por eso su nombre LDGraph (Labeled Derived Graph).
+
+En la clase Autómata se implementaron todos los métodos necesarios para poder concatenar autómatas, demterminizarlos, mostrarlos, aplicar un operador o matchear un string. 
+
+Por otra parte la clase LDGrafo consta de un estado de inicial, un conjunto de estados finales y un vector de transiciones como estructura. 
+
+Donde las transiciones son un mapa donde la clave es la etiqueta de la transicion y el significado es el conjunto de estados que se pueden alcanzar por esa transción.
+
+El grafo permite ver si se puede mover a un estado consumiendo un caracter, moverse por una transicion, determinizarse y ver si se encuentra en un estado de aceptación, entre sus operaciones más destacables. 
+
+Para ver más detalle sobre las estructuras en el apéndice se encuentra detallada la implementación.
 
 \section{Informaci\'on y requerimientos de software}
 
@@ -89,13 +102,47 @@ En esta secci\'on se indicar\'an versiones, herramientas, compiladores y todo lo
 
 \subsection{Requerimientos}
 
-//TODO: Completar que librerias usamos. Se que son las de C++ y esas cosas, pero no se ni como se dice y no quiero hacer lio, jeje. 
+El trabajo pr\'actico fue implementado sobre Ubuntu 11.05. Las siguientes instrucciones son válidas en cualquier sistema operativo Linux. De utilizar otro sistema operativo o realizar los pasos análogos.
 
-Es necesario tener instaladas las librerias para compilar en c++ (GNU GCC)y Bison. El trabajo pr\'actico fue implementado sobre Ubuntu 11.05.
+Es necesario tener instaladas las librerias para compilar en C++ y Bison.
+
+Para instalar las librerias de Build Essencial (incluye librerias para compilar C++): sudo apt-get install build-essential manpages-dev.
+
+Para instalar las librerias de Bison: sudo apt-get install bison bison-doc.
+
+Opcional: Para poder renderizar los archivos .dot con el ejecutable dot. 
+
+Para instalar las librerias para renderizar dot: sudo apt-get install graphviz.
 
 \subsection{Compilar}
 
 Utilizar el MakeFile provisto con el c\'odigo, el cual se encuentra detallado en el ap\'endice.
+
+\begin{itemize}
+
+ \item Para compilar solamente realizar: make.
+
+ \item Para compilar los tests realizar: make build-test.
+
+ \item Para compilar los tests y ejecutarlos: make test.
+
+ \item Para remover los archivos compilados: make clean. 
+
+ \item Para generar el gráfico de la gramática: make bison (La imagen se encuentra en ./src/graph/grammar.png).
+
+\end{itemize}
+
+\subsection{Ejecutar}
+
+Para ejecutar el programa se deberá estar posicionado en el directorio donde se encuentre el ejecutable, es decir el directorio donde se compiló.
+
+El archivo ejecutable se llama grep-line y para utilizarlo deberá escribirse la siguiente sentencia: ./grep-line regexp [file] 
+
+El primer parámetro es la expresion regular, mientras que el segundo parámetro opcional es un archivo con las cadenas a matchear, en caso de no utilizarse matchea por entrada estandard.
+
+Para ver gráficos del autómata generado se deberá agregar el flag -i. 
+
+//TODO: ¿Completar como armamos las imágenes?
 
 \section{Casos de Prueba}
 
@@ -103,8 +150,7 @@ Utilizar el MakeFile provisto con el c\'odigo, el cual se encuentra detallado en
 
 Las casos de prueba utilizados para validar la gram\'atica fueron los siguientes:
 
-\lstinputlisting{../src/tests/test-regexp.}
-\bigskip
+\lstinputlisting{../src/tests/test-regexp}
 \bigskip
 
 \section{Resultados}
@@ -121,8 +167,28 @@ Nos fue muy útil para chequear que la gram\'atica no tenga conflictos el tener u
 
 \subsection{MakeFile}
 
-\lstinputlisting{../src/MakeFile.}
+\lstinputlisting[language=make]{../src/Makefile}
 \bigskip
+
+\subsection{Automata}
+
+\subsubsection{Headers}
+\lstinputlisting[language=C++]{../src/automata.hpp}
+\bigskip
+
+\subsubsection{Impementación}
+\lstinputlisting[language=C++]{../src/automata.cpp}
+\bigskip
+
+
+\subsection{Grafo}
+
+\subsubsection{Headers}
+\lstinputlisting[language=C++]{../src/grafo.hpp}
+\bigskip
+
+\subsubsection{Impementación}
+\lstinputlisting[language=C++]{../src/grafo.cpp}
 \bigskip
 
 \end{document}
