@@ -1,0 +1,58 @@
+\section{Información y requerimientos de software}
+
+En esta sección se indicarán versiones, herramientas, compiladores y todo lo 
+necesario para la realización del trabajo práctico.
+
+\subsection{Requerimientos}
+
+El trabajo práctico fue implementado sobre Ubuntu 11.04. Las siguientes instrucciones
+ son válidas en cualquier sistema operativo Linux. De utilizar otro sistema 
+ operativo realizar los pasos análogos.
+
+Es necesario tener instalados los paquetes para compilar en \texttt{C++} y \texttt{Bison}.
+
+Para instalar los paquetes de Build Essential (incluye librerias para compilar C++): \texttt{sudo apt-get install build-essential manpages-dev}.
+
+Para instalar los paquetes de Bison: \texttt{sudo apt-get install bison bison-doc}.
+
+(Opcional): Para poder renderizar los archivos .dot es necesario tener instalado el ejecutable dot. 
+
+Para instalarlo: \texttt{sudo apt-get install graphviz}.
+
+\subsection{Compilar}
+
+Utilizar el MakeFile provisto con el código, el cual se encuentra detallado en el apéndice.
+
+\begin{itemize}
+
+ \item Para compilar solamente el ejecutable principal (grep-line): \texttt{make}.
+
+ \item Para compilar los tests: \texttt{make build-test}.
+ 
+ \item Para compilar todo: \texttt{make all}.
+
+ \item Para compilar los tests y ejecutarlos: \texttt{make test}.
+
+ \item Para remover los archivos compilados: \texttt{make clean}. 
+
+ \item Para generar el gráfico de la gramática: \texttt{make bison} (La imagen se encontrará en ./src/graph/grammar.png).
+
+\end{itemize}
+
+\subsection{Ejecutar}
+
+Para ejecutar el programa se deber estar posicionado en el directorio donde 
+se encuentre el ejecutable, es decir el directorio donde se compiló.
+
+El archivo ejecutable se llama grep-line y para utilizarlo deber escribirse 
+la siguiente sentencia: ./grep-line regexp [file] [-i].
+
+El primer parámetro es la expresión regular, mientras que el segundo parámetro 
+opcional es un archivo con las cadenas a matchear, en caso de no utilizarse 
+leerá la entrada por entrada estándar.
+
+Para ver gráficos del autómata generado se deber agregar el flag -i. Esta opción
+no funciona si no se pasa el archivo como parámetro. El archivo con la información
+para graficar aparecerá en la carpeta \texttt{graph/dots/}, para transformar dicho
+archivo a png usar el siguiente comando: \\
+\texttt{dot graph/dots/grep-line.dot -Tpng -o archivo\_salida.png}

@@ -1,8 +1,22 @@
 #!/bin/sh
-
+i=0;
+OK=1;
+echo "Testing regexp";
 for x in $(cat tests/test-regexp)
 do
-cat tests/frases | ./grep-line $x
+	./grep-line $x tests/texto > tests/cases/tmp 2> /dev/null
+	R=$(diff -q tests/cases/tmp tests/cases/regexp-$i.out);
+	if [ -n "$R" ]
+		then
+			OK=0
+			echo 'Falló la expresión regular "'$x'"';
+	fi;
+	i=$(($i+1));
 done;
+rm -f tests/cases/tmp
+if [ $OK -eq "1" ]
+	then
+		echo "Test regexp OK!";
+fi;
 
 

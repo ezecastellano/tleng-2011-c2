@@ -58,9 +58,7 @@ void LDGraph::operator +=(const LDGraph & other){
     _tail = offset_dstates(other._tail, offset);
 }
 
-/** Given a LDGraph, it appends all its states to this
- * renaming them with new ids. 
- * returns the id of the first state (they are numbered in order)*/
+
 unsigned int LDGraph::copy_states(const LDGraph & other) {
     unsigned int offset = _rels.size();
     unsigned int osize = other._rels.size();
@@ -112,17 +110,17 @@ void LDGraph::add_transition(Dstate origins, Dstate destinies, char t) {
 
 void LDGraph::dtran(const Dstate & dstate, Dstate & res, char c) const {
     move_dstate(dstate, res, c);
-    clausura_lambda_dstate(res);
+    lambda_closure_dstate(res);
 }
 
-void LDGraph::clausura_lambda_dstate(Dstate & dstate) const {
+void LDGraph::lambda_closure_dstate(Dstate & dstate) const {
     for(set< State >::iterator it = dstate.begin();
         it != dstate.end();
         it++) {
-        clausura_lambda_state(*it, dstate);
+        lambda_closure_state(*it, dstate);
     }
 }
-void LDGraph::clausura_lambda_state(State state, Dstate & res) const {
+void LDGraph::lambda_closure_state(State state, Dstate & res) const {
     res.insert(state);
     for(mit it = _rels[state].begin(); it != _rels[state].end(); it++){
         if(it->first == '/' )
@@ -130,12 +128,11 @@ void LDGraph::clausura_lambda_state(State state, Dstate & res) const {
                  sit != it->second.end();
                  sit++) {
                 if(not res.count(*sit))
-                    clausura_lambda_state(*sit, res);
+                    lambda_closure_state(*sit, res);
             }
     }
 }
 void LDGraph::move_state(State state, char c, Dstate & res) const {
-    //assert(can_move(state, c));
     Dstate follow = _rels[state].find(c)->second;
     for( Dstate::iterator dit = follow.begin();
         dit != follow.end();
@@ -183,7 +180,7 @@ bool LDGraph::is_accepted(State t) const {
 
 void LDGraph::determinize() {
     Dstate initial({_init});
-    clausura_lambda_dstate(initial);
+    lambda_closure_dstate(initial);
     vector< Dstate > dstates({initial});
     vector< Trans > relations(1);
     stack< State > pending_dstates( {0} );

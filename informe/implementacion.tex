@@ -1,0 +1,31 @@
+\section{implementación}
+
+La implementación fue realizada en el lenguaje \texttt{C++}, utilizando la herramienta \texttt{Bison}. 
+
+Para recononocer las cadenas enunciadas por la expresión regular decidimos construir 
+un autómata finito determinístico al parsear la expresión regular ingresada.
+Al construir el autómata inicialmente utilizamos transiciones lambda y permitimos 
+la generación de autómatas no determinísticos (dos estados alcanzables por una misma
+transición). Al terminar de parsear tomamos el autómata y le aplicamos el algorítmo
+de determinización por clausura lambda. 
+
+Para la implementación utilizamos la clase \texttt{Automata}, que internamente usa un 
+grafo dirigido y etiquetado, de ahí su nombre \texttt{LDGraph} (Labeled Directed Graph).
+
+En la clase Autómata se implementaron todos los métodos necesarios para poder 
+concatenar autómatas, determinizarlos, mostrarlos, aplicar un operador (*, + o ?) 
+o matchear un string. Es importante que para poder matchear el autómata tiene como
+precondición estar determinizado. Cualquier operación de concatenación u 
+aplicación de operadores transforma el autómata a un no determinístico.
+
+Por otra parte la clase \texttt{LDGraph} consta de un estado de inicial, un conjunto de 
+estados finales y un vector de transiciones como estructura. Donde cada transición
+es un diccionario, en el cual la clave es la etiqueta de la transición y el 
+significado es el conjunto de estados que se pueden alcanzarse por esa transición.
+
+El grafo permite ver si se puede mover de un estado a otro a través de una transición
+etiquetada con un determinado caracter, moverse por una transición, determinizarse
+y ver si se encuentra en un estado de aceptación, entre sus operaciones más destacables.
+
+Para ver más detalle sobre las estructuras en el apéndice se encuentra detallada 
+la implementación.

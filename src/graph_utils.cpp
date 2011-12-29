@@ -1,5 +1,16 @@
 #include "graph_utils.hpp"
 
+/** Returns true if intersection is not empty */
+bool set_match(const Dstate one, const Dstate two) {
+    for( Dstate::const_iterator it = one.begin();
+        it != one.end();
+        it++) {
+        if(two.count(*it))
+            return true;
+    }
+    return false;
+
+}
 
 void add_to_tail(const Dstate & n, Dstate & new_tail, const Dstate & old_tail, State new_state) {
     if( set_match(n,old_tail) )
@@ -37,15 +48,3 @@ Dstate offset_dstates(Dstate states, int offset) {
         res.insert(*it + offset);
     return res;
 }
-
-bool set_match(const Dstate one, const Dstate two) {
-    for( Dstate::const_iterator it = one.begin();
-        it != one.end();
-        it++) {
-        if(two.count(*it))
-            return true;
-    }
-    return false;
-        
-}
-

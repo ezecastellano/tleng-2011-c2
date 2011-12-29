@@ -1,51 +1,13 @@
 \documentclass[a4paper,spanish] {article} 
 
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{listings}
-\usepackage{amssymb}
-\pagestyle{empty}
-
-\newcommand{\real}{\ensuremath{\mathbb{R}}}
-
 \usepackage [spanish] {babel} 
-\usepackage [latin1]{inputenc}
-\usepackage{graphicx}
+\usepackage [utf8]{inputenc}
 \usepackage{caratula}
-\usepackage{subfig}
 \usepackage{dsfont}
-\usepackage{algorithm}
-\usepackage{amsmath}
-\usepackage{algorithmic}
-\usepackage{sidecap}
-\usepackage{ulem} 
+\usepackage{listings}
 
 \parindent = 0 pt
 \parskip = 11 pt
-
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\pagestyle{empty}
-
-
-
-%links
-\usepackage{hyperref}
-\hypersetup{
-    colorlinks,%
-    citecolor=blue,%
-    filecolor=blue,%
-    linkcolor=blue,%
-    urlcolor=blue
-}
-
-\def\dashuline{\bgroup 
-\ifdim\ULdepth=\maxdimen  % Set depth based on font, if not set already
-\settodepth\ULdepth{(j}\advance\ULdepth.4pt\fi
-\markoverwith{\kern.15em
-\vtop{\kern\ULdepth \hrule width .3em}%
-\kern.15em}\ULon}
 
 
 \addtolength{\oddsidemargin}{-1in}
@@ -69,257 +31,22 @@
 
 \newpage
 \tableofcontents
+
 \newpage
 \newpage
-\section{Gram\'atica}
 
-Describimos la gram\'atica de manera tal que no tenga conflictos de ningún tipo (reduce/reduce o shift/reduce). A su vez no perdimos ni agregamos poder de expresividad, ya que de esta manera podemos representar las mismas cadenas que antes. 
-
-\subsection{Definición}
-
-La gram\'atica utilizada en la implementación de este trabajo práctico es la siguiente:
-
-\begin{lstlisting}
-
-G = < {Expression},{caracter, |, *, +, ?, ., (, )},P,E >
-
-P:
-
-Expression --> Term        
-    | Term Expression      
-    | Term | Expression    
-
-    
-Term --> Term + 
-    | Term ? 
-    | Term *
-    | Operand
-
-Operand --> Parenthesis  
-    | Character       
-
-Character --> caracter    
-    | .
-
-Parenthesis --> (Expression)
-
-\end{lstlisting}
-
-
-\subsection{Razonamiento}
-
-El razonamiento que nos llevo a tomar la decisión de esta gramática a partir de la brindada por la cátedra fue el siguiente.
-
-Inicialmente la gramática tenía las siguientes producciones.
-
-\begin{lstlisting}
-
-E --> EE
-    | E|E
-    | E*
-    | E+
-    | E?
-    | (E)
-    | caracter
-    | .
-
-\end{lstlisting}
-
-Primero separamos los terminales en una producción aparte. 
-
-\begin{lstlisting}
-E --> EE
-    | E|E
-    | E*
-    | E+
-    | E?
-    | (E)
-    | C
-
-C --> caracter
-    | .
-\end{lstlisting}
-
-Luego separamos al paréntesis en una producción aparte. 
-
-\begin{lstlisting}
-
-E --> EE
-    | E|E
-    | E*
-    | E+
-    | E?
-    | P
-    | C
-
-C --> caracter
-    | .
-
-P --> (E)
-
-\end{lstlisting}
-
-Luego unificamos caracteres y paréntesis en operandos, que son elementos que ya consideramos cerrados, pero sin operadores aplicados. 
-
-\begin{lstlisting}
-
-E --> EE
-    | E|E
-    | E*
-    | E+
-    | E?
-    | O
-
-O --> P
-    | C
-
-C --> caracter
-    | .
-
-P --> (E)
-
-\end{lstlisting}
-
-Luego desamibiguamos la gramática dividiendo en expresiones y términos. Y al hacer esto, definimos los términos como elementos ya cerrados, pero que pueden tener operadores aplicados (0 o más). 
-
-\begin{lstlisting}
-
-E --> TE
-    | T|E
-    | T
-
-T --> T*
-    | T+
-    | T?
-    | O
-
-O --> P
-    | C
-
-C --> caracter
-    | .
-
-P --> (E)
-
-\end{lstlisting}
-
-De esta forma y luego de chequear en Bison que la gramática no tuviera confilctos de ningún tipo decidimos utilizarla en la implementación de nuestro trabajo práctico.
-
-Para ver más detalles de la implementación en Bison, ver la sección Gramática del apéndice. 
-
-\section{Implementaci\'on}
-
-La implementación fue realizada en el lenguaje C++, utilizando la herramienta Bison. 
-
-Para la implementación utilizamos la estructura Autómata, que internamente es un grafo dirigido y etiquetado, por eso su nombre LDGraph (Labeled Derived Graph).
-
-En la clase Autómata se implementaron todos los métodos necesarios para poder concatenar autómatas, determinizarlos, mostrarlos, aplicar un operador o matchear un string. 
-
-Por otra parte la clase LDGrafo consta de un estado de inicial, un conjunto de estados finales y un vector de transiciones como estructura. 
-
-Donde las transiciones son un mapa donde la clave es la etiqueta de la transicion y el significado es el conjunto de estados que se pueden alcanzar por esa transción.
-
-El grafo permite ver si se puede mover a un estado consumiendo un caracter, moverse por una transicion, determinizarse y ver si se encuentra en un estado de aceptación, entre sus operaciones más destacables. 
-
-Para ver más detalle sobre las estructuras en el apéndice se encuentra detallada la implementación.
-
-\section{Informaci\'on y requerimientos de software}
-
-En esta secci\'on se indicar\'an versiones, herramientas, compiladores y todo lo necesario para la realizaci\'on del trabajo pr\'actico.
-
-\subsection{Requerimientos}
-
-El trabajo pr\'actico fue implementado sobre Ubuntu 11.05. Las siguientes instrucciones son válidas en cualquier sistema operativo Linux. De utilizar otro sistema operativo realizar los pasos análogos.
-
-Es necesario tener instaladas las librerias para compilar en C++ y Bison.
-
-Para instalar las librerias de Build Essencial (incluye librerias para compilar C++): sudo apt-get install build-essential manpages-dev.
-
-Para instalar las librerias de Bison: sudo apt-get install bison bison-doc.
-
-(Opcional): Para poder renderizar los archivos .dot es necesario tener instalado el ejecutable dot. 
-
-Para instalarlo: sudo apt-get install graphviz.
-
-\subsection{Compilar}
-
-Utilizar el MakeFile provisto con el c\'odigo, el cual se encuentra detallado en el ap\'endice.
-
-\begin{itemize}
-
- \item Para compilar solamente: make.
-
- \item Para compilar los tests: make build-test.
-
- \item Para compilar los tests y ejecutarlos: make test.
-
- \item Para remover los archivos compilados: make clean. 
-
- \item Para generar el gráfico de la gramática: make bison (La imagen se encuentra en ./src/graph/grammar.png).
-
-\end{itemize}
-
-\subsection{Ejecutar}
-
-Para ejecutar el programa se deberá estar posicionado en el directorio donde se encuentre el ejecutable, es decir el directorio donde se compiló.
-
-El archivo ejecutable se llama grep-line y para utilizarlo deberá escribirse la siguiente sentencia: ./grep-line regexp [file] .
-
-El primer parámetro es la expresion regular, mientras que el segundo parámetro opcional es un archivo con las cadenas a matchear, en caso de no utilizarse matchea por entrada standard.
-
-Para ver gráficos del autómata generado se deberá agregar el flag -i. 
-
-//TODO: ¿Completar como armamos las imágenes?
-
-\section{Casos de Prueba}
-
-//TODO: Estos fueron los que usamos al comienzo para ver que la gram\'atica sea v\'alida, falta completar en que casos la deber\'ia aceptar y en cuales no. 
-
-Las casos de prueba utilizados para validar la gram\'atica fueron los siguientes:
-
-\lstinputlisting{../src/tests/test-regexp}
-\bigskip
-
-\section{Resultados}
-
-//TODO: Completar cuales fueron los resultados obtenidos. 
-
-\section{Conclusiones}
-
-//TODO: Completar las conclusiones. 
-
-Nos fue muy útil para chequear que la gram\'atica no tenga conflictos el tener una herramienta como Bison. 
-
-\section{Ap\'endice}
-
-\subsection{Makefile}
-
-\lstinputlisting[language=make]{../src/Makefile}
-\bigskip
-
-\subsection{Autómata}
-
-\subsubsection{Headers}
-\lstinputlisting[language=C++]{../src/automata.hpp}
-\bigskip
-
-\subsubsection{Impementación}
-\lstinputlisting[language=C++]{../src/automata.cpp}
-\bigskip
-
-\subsection{Grafo}
-
-\subsubsection{Headers}
-\lstinputlisting[language=C++]{../src/graph.hpp}
-\bigskip
-
-\subsubsection{Impementación}
-\lstinputlisting[language=C++]{../src/graph.cpp}
-\bigskip
-
-\subsection{Gramática}
-
-\lstinputlisting{../src/grep-line.ypp}
-\bigskip
+\input{gramatica.tex}
+\newpage
+\input{implementacion.tex}
+\newpage
+\input{software.tex}
+\newpage
+\input{tests.tex}
+%\newpage
+%\input{resultados.tex}
+%\newpage
+%\input{conclusiones.tex}
+\newpage
+\input{apendice.tex}
 
 \end{document}

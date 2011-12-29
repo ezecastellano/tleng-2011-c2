@@ -13,21 +13,28 @@
 using namespace std;
 
 class Automata {
-        public:        
+        public:
+            /** Builds an empty automata (matchs anything) */
             Automata();
             
+            /** Build a new automata that matches a char (or every char if '.'
+             * is given */
             Automata(char);
             
+            /** This automata now match what it was matching or the other 
+             * automata */
             void operator|=(Automata & other);
-            //Concatenate two automata
+            /** Concatenate two automata */
             void operator+=(Automata & other);
-            //Apply unary operator
+            /** Apply unary operator like '*', '+' and  '?' */
             Automata & apply_op(const char cs);
             
-            //Builds an anychar automata
+            /** Convert this automata from NDA to DFA */
             void determinize();
-            //Match a string
+            /** Given a string answer if this Automataaa matches it
+             * Must be a DFA Automata (apply determinize)*/
             bool match(string);
+            
             
             Automata & operator = (const Automata & other);
             
