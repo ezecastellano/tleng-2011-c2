@@ -15,6 +15,7 @@ char* regexp;
 int regexp_index = 0;
 Automata automata;
 
+/** Returns the next char to analyze */
 char get_next() {
     char c = regexp[regexp_index];
     regexp++;
@@ -26,7 +27,8 @@ void yyerror (char const *s) {
    fprintf (stderr, "%s", s);
 }
 
-
+/** Lexical analyzer.
+ * Very simple, each token has only one char. */
 int yylex (void) {
     char c = get_next();
     /* END */

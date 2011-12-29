@@ -1,0 +1,7 @@
+#!/bin/sh
+i=0;
+for x in $(cat tests/test-regexp)
+do
+	./grep-line $x tests/texto > tests/cases/regexp-$i.out 2> /dev/null
+	i=$(($i+1));
+done;

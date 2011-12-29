@@ -1,10 +1,5 @@
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include "automata.hpp"
-#include "graph.hpp"
 #include "debugging.hpp"
+#include <fstream>
 
 using namespace std;
 

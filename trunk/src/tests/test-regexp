@@ -1,8 +1,10 @@
-casa
-(casa)
 a?
 (a)?
 (a?)
+a+?
+ab+a
+casa
+(casa)
 casa|perro
 (casa)|(perro)
 (casa)|perro
@@ -11,7 +13,7 @@ casa?|perro?
 (casa?)|(perro)?
 (casa)?|perro?
 casa?|(perro)?
-a+?
-(asd?)?
-asd|asd
-
+(casa?)?
+casa|casa
+.+casa.+
+.*casa.*

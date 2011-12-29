@@ -1,11 +1,14 @@
 CXXFLAGS = -g -Wall -Wextra -std=c++0x
 LDFLAGS = $(CXXFLAGS)
+
 ABSOBJ = automata grep-line.tab main matcher graph graph_utils tests/test-automata tests/test-graph debugging
 SOURCES= $(addsuffix .cpp, $(ABSOBJ))
 OBJ = $(addsuffix .o, $(ABSOBJ))
 BISON = grep-line.ypp
+
+# Objects used by each binary
 MAIN_OBJ = automata.o grep-line.tab.o main.o matcher.o graph.o graph_utils.o debugging.o
-GRAPH_TEST_OBJ = graph.o graph_utils.o tests/test-graph.o debugging.o
+GRAPH_TEST_OBJ = graph.o graph_utils.o tests/test-graph.o debugging.o automata.o
 AUTOMATA_TEST_OBJ = automata.o graph.o graph_utils.o tests/test-automata.o debugging.o
 
 
@@ -27,7 +30,9 @@ bison:$(BISON)
 	dot graph/dots/grammar.dot -Tpng -o graph/grammar.png
 
 grep-line.tab.cpp: bison-build
-	
+
+
+# Build dependecies for each .o	
 deps: 
 	$(CXX) $(CXXFLAGS) -MM -MP  $(SOURCES) > $@
 
@@ -48,4 +53,4 @@ test: build-test
 	./test-automata
 	./test-graph
 
-
+all: build-test
