@@ -137,6 +137,34 @@ P --> (E)
 
 \end{lstlisting}
 
+
+Por último separamos las expresiones de disyuncion de las expresiones de 
+concatenación para darle menor precedencia a la disyunción.
+
+\begin{lstlisting}
+
+E --> X
+    | E|X
+
+X -> T
+    | TX
+
+T --> T*
+    | T+
+    | T?
+    | O
+
+O --> P
+    | C
+
+C --> caracter
+    | .
+
+P --> (E)
+
+\end{lstlisting}
+
+
 De esta forma y luego de chequear en Bison que la gramática no tuviera 
 conflictos de ningún tipo decidimos utilizarla en la implementación 
 de nuestro trabajo práctico. De esta forma consiguiendo un parser de tipo LALR(1).
