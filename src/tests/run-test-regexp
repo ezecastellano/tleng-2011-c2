@@ -9,7 +9,14 @@ do
 	if [ -n "$R" ]
 		then
 			OK=0
-			echo 'Falló la expresión regular "'$x'"';
+			echo 'Falló la expresión regular "'$x'" numero de test:"'$i'"';
+			echo 'expected:';
+			echo '';
+			cat tests/cases/regexp-$i.out;
+			echo '';
+			echo 'Got:';
+			echo '';
+			cat tests/cases/tmp;
 	fi;
 	i=$(($i+1));
 done;

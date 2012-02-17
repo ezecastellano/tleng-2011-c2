@@ -12,12 +12,16 @@
 %% /* Grammar rules and actions follow.  
     * (Bison supplies a default action for each rule: $$ = $1.) */
 
-input: expression       { automata = $1;}
+input: expression       { automata = $1;};
 
-expression: term             
-    | term expression        { $$ = $1; $$ += $2;}
-    | term '|' expression    { $$ = $1; $$ |= $3;}
+
+
+expression: preterm             
+    | preterm '|' expression    { $$ = $1; $$ |= $3;}
 ;
+
+preterm: term
+    | term preterm        { $$ = $1; $$ += $2;};
     
 term: term '+'          { $$ = $1.apply_op('+');}
     | term '?'          { $$ = $1.apply_op('?');}
